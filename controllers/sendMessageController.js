@@ -13,18 +13,21 @@ const sendWhatsappAPI = async (req, res) => {
     data = getTextMessageData(to, message);
   }
 
+  if (!to)
+    return res
+      .status(500)
+      .json({ error: "Must have a 'to' : 'phone number (e.g. 94763891917)'" });
+
   if (!data)
-    returnres.status(500).json({ error: "Use either template or message" });
+    return res.status(500).json({ error: "Use either template or message" });
 
   await sendMessage(data)
     .then(function (response) {
-      return res.sendStatus(200);
+      return res.status(200).json(response.data);
     })
     .catch(function (error) {
       return res.status(500).json({ error: error.response.data.error });
     });
 };
 
-module.exports = {
-  sendMessage: sendWhatsappAPI,
-};
+module.exports = sendWhatsappAPI;
