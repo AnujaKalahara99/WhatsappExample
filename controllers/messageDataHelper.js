@@ -3,7 +3,7 @@ const axios = require("axios");
 async function sendMessage(data) {
   var config = {
     method: "post",
-    url: `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.PHONE_NUMBER_ID}/messages`,
     headers: {
       Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
       "Content-Type": "application/json",
