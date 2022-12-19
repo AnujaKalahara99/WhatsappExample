@@ -26,7 +26,9 @@ const sendWhatsappAPI = async (req, res) => {
       return res.status(200).json(response.data);
     })
     .catch(function (error) {
-      return res.status(500).json({ error: error.response.data.error });
+      return res
+        .status(error.response.status)
+        .json({ error: error.response.data.error });
     });
 };
 
