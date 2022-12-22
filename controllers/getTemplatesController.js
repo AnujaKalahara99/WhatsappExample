@@ -12,14 +12,12 @@ const getAllTamplates = async (req, res) => {
   };
   return await axios(config)
     .then(function (response) {
-      return res
-        .status(200)
-        .json(
-          response.data.data.map((template) => ({
-            name: template.name,
-            id: template.id,
-          }))
-        );
+      return res.status(200).json(
+        response.data.data.map((template) => ({
+          label: template.name,
+          id: template.id,
+        }))
+      );
     })
     .catch(function (error) {
       return res
