@@ -3,7 +3,7 @@ const axios = require("axios");
 const getAllTamplates = async (req, res) => {
   var config = {
     method: "get",
-    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates?limit=3`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates`,
     headers: {
       Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
       "Content-Type": "application/json",
@@ -12,7 +12,14 @@ const getAllTamplates = async (req, res) => {
   };
   return await axios(config)
     .then(function (response) {
-      return res.status(200).json(response.data);
+      return res
+        .status(200)
+        .json(
+          response.data.data.map((template) => ({
+            name: template.name,
+            id: template.id,
+          }))
+        );
     })
     .catch(function (error) {
       return res
