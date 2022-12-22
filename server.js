@@ -1,9 +1,12 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
 const sendMessage = require("./routes/sendMessage");
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 app.listen(process.env.PORT, () => {
