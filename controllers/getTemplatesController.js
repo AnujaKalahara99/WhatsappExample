@@ -12,11 +12,16 @@ const getAllTamplates = async (req, res) => {
   };
   return await axios(config)
     .then(function (response) {
-      return res.status(200).json(
-        response.data.data.map((template) => ({
-          label: template.name,
-          id: template.id,
-        }))
+      return res.status(200).send(
+        response.data.data
+          .filter(
+            (template) =>
+              template.language === "en" || template.language === "en_US"
+          )
+          .map((template) => ({
+            label: template.name,
+            id: template.id,
+          }))
       );
     })
     .catch(function (error) {
