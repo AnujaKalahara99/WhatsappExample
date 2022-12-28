@@ -14,10 +14,7 @@ const getAllTamplates = async (req, res) => {
     .then(function (response) {
       return res.status(200).send(
         response.data.data
-          .filter(
-            (template) =>
-              template.language === "en" || template.language === "en_US"
-          )
+          .filter((template) => template.language === "en")
           .map((template) => ({
             label: template.name,
             id: template.id,
