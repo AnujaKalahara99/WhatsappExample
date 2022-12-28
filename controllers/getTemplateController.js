@@ -22,8 +22,15 @@ const getTamplate = async (req, res) => {
 
   function RestructureTemplate(temp) {
     if (!temp || !temp.data[0]) return {};
-    var template = { name: temp.data[0].name };
-    temp.data[0].components.forEach((element) => {
+
+    var tempBody = temp.data[0];
+    temp.data.forEach((tempLanguage) => {
+      if (tempLanguage.language === "en" || tempLanguage.language === "en_US") {
+        tempBody = tempLanguage;
+      }
+    });
+    var template = { name: tempBody.name };
+    tempBody.components.forEach((element) => {
       if (element.type === "HEADER") {
         template.header = { type: element.format };
       }
