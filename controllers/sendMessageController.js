@@ -5,7 +5,8 @@ const {
 } = require("./messageDataHelper");
 
 const sendWhatsappAPI = async (req, res) => {
-  const { to, template, message, body_params, header_params } = req.body;
+  const { to, template, message, body_params, header_params, messageCount } =
+    req.body;
   let data = null;
   if (template && template !== "") {
     data = getTemplateMessageData(to, template, body_params, header_params);
@@ -21,6 +22,16 @@ const sendWhatsappAPI = async (req, res) => {
   if (!data)
     return res.status(500).json({ error: "Use either template or message" });
 
+  if (messageCount !== null) {
+    for (let i = 0; i < messageCount; i++) {
+      await sendWhatsappMessage(data);
+    }
+  } else {
+    sendWhatsappMessage(data);
+  }
+};
+
+const sendWhatsappMessage = async (data) => {
   await sendMessage(data)
     .then(function (response) {
       return res.status(200).json(response.data);

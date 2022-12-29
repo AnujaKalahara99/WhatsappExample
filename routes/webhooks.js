@@ -7,7 +7,7 @@ let messageLog = [{ message: "hoobaa" }];
 
 router.post("/", (req, res) => {
   let body = req.body;
-  let message = {};
+  const message = {};
 
   if (body.object) {
     if (
