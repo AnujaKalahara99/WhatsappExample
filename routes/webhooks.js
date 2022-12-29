@@ -42,7 +42,7 @@ router.get("/", (req, res) => {
   }
 });
 router.get("/messages", (req, res) => {
-  res.status(200).json({ message: "Listen" });
+  res.status(200).json(messageLog);
 });
 
 module.exports = router;
