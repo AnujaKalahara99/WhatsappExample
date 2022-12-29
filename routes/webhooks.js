@@ -3,12 +3,12 @@ const express = require("express");
 const router = express.Router();
 router.use(express.json());
 
-let messageLog = [{ message: "hoobaa" }];
+let messageLog = [];
 
 router.post("/", (req, res) => {
   let body = req.body;
   const message = {};
-  console.log("recieved msg");
+  messageLog.push({ message: "recieved" });
 
   if (body.object) {
     if (

@@ -22,18 +22,23 @@ const sendWhatsappAPI = async (req, res) => {
   if (!data)
     return res.status(500).json({ error: "Use either template or message" });
 
-  if (messageCount !== null) messageCount = 1;
-  for (let i = 0; i < messageCount; i++) {
+  const count = messageCount ? messageCount : 1;
+  const messageLog = [];
+
+  for (let i = 0; i < count; i++) {
     await sendMessage(data)
       .then(function (response) {
-        return res.status(200).json(response.data);
+        messageLog.push(response.data);
       })
       .catch(function (error) {
-        return res
-          .status(error.response.status)
-          .json({ error: error.response.data.error });
+        return res.status(error.response.status).json({
+          error: error.response.data.error,
+        });
       });
   }
+
+  console.log("after all sent");
+  res.status(200).json(messageLog);
 };
 
 module.exports = sendWhatsappAPI;
