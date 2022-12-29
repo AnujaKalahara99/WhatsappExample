@@ -42,7 +42,7 @@ router.get("/", (req, res) => {
   }
 });
 router.get("/messages", (req, res) => {
-  res.send(200).json(messageLog);
+  res.send(200).json(JSON.parse(messageLog));
 });
 
 module.exports = router;
