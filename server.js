@@ -16,7 +16,7 @@ app.listen(process.env.PORT, () => {
 
 app.use("/api/message", sendMessageRouter);
 
-app.get("/api/webhooks", webhooksRouter);
+app.use("/api/webhooks", webhooksRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "HELLLLOO" });
