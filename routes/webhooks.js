@@ -8,7 +8,6 @@ let messageLog = [];
 router.post("/", (req, res) => {
   let body = req.body;
   const message = {};
-  messageLog.push({ message: "recieved" });
 
   if (body.object) {
     if (
