@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 router.use(express.json());
 
-let messageLog = [];
+let messageLog = [{ message: "hoobaa" }];
 
 router.post("/", (req, res) => {
   let body = req.body;
