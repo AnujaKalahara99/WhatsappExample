@@ -12,12 +12,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log("Listening on PORT ", process.env.PORT);
 });
 
-const server = http.createServer(app);
-const wsServer = new websocket.server({ server });
+const wsServer = new websocket.Server({ server });
 
 app.use("/api/message", sendMessageRouter);
 
@@ -27,10 +26,14 @@ app.get("/", (req, res) => {
   res.json({ message: "HELLLLOO" });
 });
 
-wsServer.on("request", (req) => {
-  console.log("Connected with ", req.origin);
-  const connection = req.accept(null, req.origin);
-  connection.on("message", (message) => {
-    console.log("Recieved message ", message);
-  });
+// wsServer.on("request", (req) => {
+//   console.log("Connected with ", req.origin);
+//   const connection = req.accept(null, req.origin);
+//   connection.on("message", (message) => {
+//     console.log("Recieved message ", message);
+//   });
+// });
+
+wsServer.on("connection", (ws) => {
+  console.log("connected");
 });
