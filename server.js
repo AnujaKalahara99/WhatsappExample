@@ -17,7 +17,7 @@ const server = app.listen(process.env.PORT, () => {
 
 const wsServer = new websocket.Server({
   server,
-  path: "/api/webhook/messages",
+  path: "/api/webhooks/messages",
 });
 
 app.use("/api/message", sendMessageRouter);

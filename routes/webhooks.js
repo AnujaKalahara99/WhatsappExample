@@ -18,6 +18,7 @@ const broadcast = (clients, message) => {
 router.post("/", (req, res) => {
   let body = req.body;
   const message = {};
+  broadcast(req.app.locals.clients, { msg: "Got ur message" });
 
   if (body.object) {
     if (
