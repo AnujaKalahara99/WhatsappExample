@@ -5,7 +5,7 @@ const router = express.Router();
 router.use(express.json());
 
 let messageLog = [];
-let lastMessageLog = [];
+const lastMessageLog = [];
 
 router.post("/", (req, res) => {
   let body = req.body;
@@ -45,8 +45,12 @@ router.get("/", (req, res) => {
 });
 
 router.get("/messages", (req, res) => {
-  if (lastMessageLog !== messageLog) {
-    lastMessageLog = messageLog;
+  if (lastMessageLog.length !== messageLog.length) {
+    let sendLog = [];
+    for (let i = lastMessageLog.length; i < messageLog.length; i++) {
+      sendLog.push(messageLog[i]);
+      lastMessageLog.push(messageLog[i]);
+    }
     res.status(200).json(sendLog);
   } else {
     res.status(200).json({});
