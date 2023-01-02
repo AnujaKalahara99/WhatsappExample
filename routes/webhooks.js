@@ -45,12 +45,12 @@ router.get("/", (req, res) => {
 });
 
 router.get("/messages", (req, res) => {
-  var sendLog = {};
   if (lastMessageLog !== messageLog) {
     lastMessageLog = messageLog;
-    sendLog = messageLog;
+    res.status(200).json(sendLog);
+  } else {
+    res.status(200).json({});
   }
-  res.status(200).json(sendLog);
 });
 
 module.exports = router;
