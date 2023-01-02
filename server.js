@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const websocket = require("ws");
-const http = require("http");
 require("dotenv").config();
 
 const sendMessageRouter = require("./routes/sendMessage");
@@ -16,7 +15,10 @@ const server = app.listen(process.env.PORT, () => {
   console.log("Listening on PORT ", process.env.PORT);
 });
 
-const wsServer = new websocket.Server({ server });
+const wsServer = new websocket.Server({
+  server,
+  path: "/api/webhook/messages",
+});
 
 app.use("/api/message", sendMessageRouter);
 
@@ -26,14 +28,7 @@ app.get("/", (req, res) => {
   res.json({ message: "HELLLLOO" });
 });
 
-// wsServer.on("request", (req) => {
-//   console.log("Connected with ", req.origin);
-//   const connection = req.accept(null, req.origin);
-//   connection.on("message", (message) => {
-//     console.log("Recieved message ", message);
-//   });
-// });
-
 wsServer.on("connection", (ws) => {
-  console.log("connected");
+  console.log("Total Connected WS Clients : ", wsServer.clients.size);
+  app.locals.clients = wsServer.clients;
 });

@@ -1,9 +1,19 @@
 const express = require("express");
+const ws = require("ws");
 
 const router = express.Router();
+
 router.use(express.json());
 
 let messageLog = [];
+
+const broadcast = (clients, message) => {
+  clients.forEach((client) => {
+    if (client.readyState === ws.OPEN) {
+      client.send(JSON.stringify(message));
+    }
+  });
+};
 
 router.post("/", (req, res) => {
   let body = req.body;
@@ -23,6 +33,7 @@ router.post("/", (req, res) => {
       let msg_body = body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
       message.from = from;
       message.body = msg_body;
+      broadcast(req.app.locals.clients, message);
       messageLog.push(message);
     }
     res.sendStatus(200);
