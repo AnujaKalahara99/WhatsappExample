@@ -1,24 +1,15 @@
 const express = require("express");
-const ws = require("ws");
 
 const router = express.Router();
 
 router.use(express.json());
 
 let messageLog = [];
-
-const broadcast = (clients, message) => {
-  clients.forEach((client) => {
-    if (client.readyState === ws.OPEN) {
-      client.send(JSON.stringify(message));
-    }
-  });
-};
+let lastMessageLog = [];
 
 router.post("/", (req, res) => {
   let body = req.body;
   const message = {};
-  broadcast(req.app.locals.clients, { msg: "Got ur message" });
 
   if (body.object) {
     if (
@@ -34,7 +25,6 @@ router.post("/", (req, res) => {
       let msg_body = body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
       message.from = from;
       message.body = msg_body;
-      broadcast(req.app.locals.clients, message);
       messageLog.push(message);
     }
     res.sendStatus(200);
@@ -53,8 +43,14 @@ router.get("/", (req, res) => {
     res.sendStatus(400);
   }
 });
+
 router.get("/messages", (req, res) => {
-  res.status(200).json(messageLog);
+  var sendLog = {};
+  if (lastMessageLog !== messageLog) {
+    lastMessageLog = messageLog;
+    sendLog = messageLog;
+  }
+  res.status(200).json(sendLog);
 });
 
 module.exports = router;
