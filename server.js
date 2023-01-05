@@ -2,8 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const sendMessageRouter = require("./routes/sendMessage");
-const webhooksRouter = require("./routes/webhooks");
+const wtspRouter = require("./routes/wtsp");
 
 const app = express();
 
@@ -14,9 +13,7 @@ app.listen(process.env.PORT, () => {
   console.log("Listening on PORT ", process.env.PORT);
 });
 
-app.use("/api/message", sendMessageRouter);
-
-app.use("/api/webhooks", webhooksRouter);
+app.use("/api/wtsp", wtspRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "HELLLLOO" });
