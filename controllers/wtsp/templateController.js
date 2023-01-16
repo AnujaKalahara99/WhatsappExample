@@ -14,14 +14,11 @@ const getAllTamplates = async (req, res) => {
   };
   return await axios(config)
     .then(function (response) {
-      return res.status(200).send(
-        response.data.data
-          .filter((template) => template.language === "en")
-          .map((template) => ({
-            label: template.name,
-            id: template.id,
-          }))
-      );
+      return res
+        .status(200)
+        .send(
+          response.data.data.filter((template) => template.language === "en")
+        );
     })
     .catch(function (error) {
       return res
@@ -55,6 +52,7 @@ const getTamplate = async (req, res) => {
 
 const createTemplate = async (req, res) => {
   const { template } = req.body;
+
   const config = {
     method: "post",
     url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates`,

@@ -24,10 +24,10 @@ function wtsp2readable(temp) {
 
 function readable2wtsp(data) {
   const template = {};
-  template.name = template.name;
+  template.name = data.name;
   template.category = "TRANSACTIONAL";
-  template.components = template.components;
-  template.language = template.language;
+  template.components = data.components;
+  template.language = data.language;
   return template;
 }
 
