@@ -34,6 +34,7 @@ const listenForReplies = async (req, res) => {
       messageLog.push(message);
 
       const messageSave = await messageModel.create({
+        index: messageModel.count(),
         contact: from,
         recieved: true,
         text: msg_body,

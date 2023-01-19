@@ -52,7 +52,11 @@ const recieveMessage = async (req, res) => {
   //   res.status(200).json({});
   // }
 
-  const messagesSaved = await messageModel.find();
+  const { lastCheckedIndex } = req.body;
+
+  const messagesSaved = await messageModel.find(
+    (message) => message.index > lastCheckedIndex
+  );
   res.status(200).json(messagesSaved);
 };
 
