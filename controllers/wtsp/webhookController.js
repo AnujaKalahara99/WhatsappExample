@@ -1,3 +1,5 @@
+const messageModel = require("../../models/messageModel");
+
 const messageLog = [];
 
 const verify = (req, res) => {
@@ -11,7 +13,7 @@ const verify = (req, res) => {
   }
 };
 
-const listenForReplies = (req, res) => {
+const listenForReplies = async (req, res) => {
   let body = req.body;
   const message = {};
 
@@ -30,10 +32,17 @@ const listenForReplies = (req, res) => {
       message.from = from;
       message.body = msg_body;
       messageLog.push(message);
+
+      const messageSave = await messageModel.create({
+        contact: from,
+        recieved: true,
+        text: msg_body,
+      });
+
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
     }
-    res.sendStatus(200);
-  } else {
-    res.sendStatus(404);
   }
 };
 
