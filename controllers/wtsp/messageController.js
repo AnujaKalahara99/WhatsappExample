@@ -1,4 +1,5 @@
 const axios = require("axios");
+const messageModel = require("../../models/messageModel");
 
 const {
   getTextMessageData,
@@ -39,17 +40,20 @@ const sendMessage = async (req, res) => {
   else res.sendStatus(200);
 };
 
-const recieveMessage = (req, res) => {
-  if (lastMessageLog.length !== messageLog.length) {
-    let sendLog = [];
-    for (let i = lastMessageLog.length; i < messageLog.length; i++) {
-      sendLog.push(messageLog[i]);
-      lastMessageLog.push(messageLog[i]);
-    }
-    res.status(200).json(sendLog);
-  } else {
-    res.status(200).json({});
-  }
+const recieveMessage = async (req, res) => {
+  // if (lastMessageLog.length !== messageLog.length) {
+  //   let sendLog = [];
+  //   for (let i = lastMessageLog.length; i < messageLog.length; i++) {
+  //     sendLog.push(messageLog[i]);
+  //     lastMessageLog.push(messageLog[i]);
+  //   }
+  //   res.status(200).json(sendLog);
+  // } else {
+  //   res.status(200).json({});
+  // }
+
+  const messagesSaved = await messageModel.find();
+  res.status(200).json(messagesSaved);
 };
 
 async function sendToWhatsappAPI(data) {
