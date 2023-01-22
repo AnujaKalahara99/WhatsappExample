@@ -1,6 +1,4 @@
-const messageModel = require("../../models/messageModel");
-
-const messageLog = [];
+const { messageModel, saveMessage } = require("../../models/messageModel");
 
 const verify = (req, res) => {
   if (
@@ -15,7 +13,6 @@ const verify = (req, res) => {
 
 const listenForReplies = async (req, res) => {
   let body = req.body;
-  const message = {};
 
   if (body.object) {
     if (
@@ -29,22 +26,13 @@ const listenForReplies = async (req, res) => {
         body.entry[0].changes[0].value.metadata.phone_number_id;
       let from = body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
       let msg_body = body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
-      message.from = from;
-      message.body = msg_body;
-      messageLog.push(message);
 
-      const messageSave = await messageModel.create({
-        index: messageModel.count(),
-        contact: from,
-        recieved: true,
-        text: msg_body,
-      });
-
-      res.sendStatus(200);
+      const message = await saveMessage(from, msg_body, true);
+      res.status(200).json(message);
     } else {
       res.sendStatus(404);
     }
   }
 };
 
-module.exports = { messageLog, verify, listenForReplies };
+module.exports = { verify, listenForReplies };

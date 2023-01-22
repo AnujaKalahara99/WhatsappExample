@@ -1,13 +1,10 @@
 const axios = require("axios");
-const messageModel = require("../../models/messageModel");
+const { messageModel, saveMessage } = require("../../models/messageModel");
 
 const {
   getTextMessageData,
   getTemplateMessageData,
 } = require("./messageDataHelper");
-
-const lastMessageLog = [];
-const { messageLog } = require("./webhookController");
 
 const sendMessage = async (req, res) => {
   const { to, template, message, body_params, header_params } = req.body;
@@ -30,7 +27,10 @@ const sendMessage = async (req, res) => {
 
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
-      .then(function (response) {})
+      .then(async function (response) {
+        if (response.data.type !== "template")
+          await saveMessage(response.data.to, response.data.body.text, false);
+      })
       .catch(function (error) {
         console.log(error);
         errorLog.push({ to: data[i].to, error: error.response.data.error });
@@ -41,22 +41,11 @@ const sendMessage = async (req, res) => {
 };
 
 const recieveMessage = async (req, res) => {
-  // if (lastMessageLog.length !== messageLog.length) {
-  //   let sendLog = [];
-  //   for (let i = lastMessageLog.length; i < messageLog.length; i++) {
-  //     sendLog.push(messageLog[i]);
-  //     lastMessageLog.push(messageLog[i]);
-  //   }
-  //   res.status(200).json(sendLog);
-  // } else {
-  //   res.status(200).json({});
-  // }
-
   const { lastCheckedIndex } = req.body;
 
-  const messagesSaved = await messageModel.find(
-    (message) => message.index > lastCheckedIndex
-  );
+  const messagesSaved = await messageModel.find({
+    index: { $gt: lastCheckedIndex },
+  });
   res.status(200).json(messagesSaved);
 };
 
