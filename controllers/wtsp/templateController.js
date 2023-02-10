@@ -28,6 +28,7 @@ const getAllTamplates = async (req, res) => {
 };
 
 const getTamplate = async (req, res) => {
+  console.log("GetAllTemplates");
   var config = {
     method: "get",
     url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates?name=${req.params.name}`,

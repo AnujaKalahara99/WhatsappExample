@@ -18,7 +18,7 @@ const authHandler = asyncHandler(async (req, res, next) => {
     }
   } else {
     res.status(401);
-    throw new Error("Invalid Token");
+    throw new Error("Invalid User Token");
   }
 });
 

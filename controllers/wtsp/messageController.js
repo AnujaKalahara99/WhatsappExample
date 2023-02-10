@@ -28,8 +28,8 @@ const sendMessage = async (req, res) => {
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
       .then(async function (response) {
-        if (response.data.type !== "template")
-          await saveMessage(response.data.to, response.data.body.text, false);
+        //if (response.data.type !== "template")
+        //await saveMessage(response.data.to, response.data.body.text, false);
       })
       .catch(function (error) {
         console.log(error);
