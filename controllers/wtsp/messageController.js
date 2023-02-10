@@ -32,11 +32,13 @@ const sendMessage = async (req, res) => {
         //await saveMessage(response.data.to, response.data.body.text, false);
       })
       .catch(function (error) {
-        console.log(error);
-        errorLog.push({ to: data[i].to, error: error.response.data.error });
+        errorLog.push({
+          to: data[i].to,
+          error: error.response.data.error.message,
+        });
       });
   }
-  if (errorLog.length !== 0) res.status(500).json(errorLog);
+  if (errorLog.length !== 0) res.status(500).json({ message: errorLog });
   else res.sendStatus(200);
 };
 
