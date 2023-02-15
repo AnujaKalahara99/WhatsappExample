@@ -9,7 +9,7 @@ const logSchema = mongoose.Schema(
 
 const createLog = async (log) => {
   const messageSaved = await logModel.create({
-    log,
+    log: "iuhujnn",
   });
 
   return messageSaved;
