@@ -33,6 +33,14 @@ const sendMessage = async (req, res) => {
         if (response.data.type && response.data.type !== "template")
           await saveMessage(response.data.to, response.data.body.text, false);
         else {
+          await saveMessage(
+            response.data.messages[0].id,
+            response.data.contacts[0].input,
+            "business message",
+            "-",
+            false
+          );
+
           //Extra Code needed to get Templates to a text format
         }
       })

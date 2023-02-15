@@ -6,7 +6,7 @@ const messageSchema = mongoose.Schema(
     waid: { type: String, required: true, unique: true },
     contact: { type: String, required: true },
     isRecieved: { type: Boolean, required: true },
-    status: { type: String, required: true },
+    status: { type: String },
     header: {
       type: { type: String },
       data: { type: String },
@@ -21,18 +21,12 @@ const messageModel = mongoose.model("Messages", messageSchema);
 
 const saveMessage = async (waid, number, msg, status, recieved) => {
   const count = await messageModel.count();
-  const updated = await messageModel.findOneAndUpdate(
-    { waid },
-    { status },
-    { new: true }
-  );
-  if (updated) return updated;
   const messageSaved = await messageModel.create({
     index: count,
     waid,
     contact: number,
     isRecieved: recieved,
-    status: status,
+    status: status ? status : "",
     header: { type: "", data: "" },
     body: msg,
     footer: "",
@@ -40,4 +34,13 @@ const saveMessage = async (waid, number, msg, status, recieved) => {
   return messageSaved;
 };
 
-module.exports = { messageModel, saveMessage };
+const updateMessage = async (waid, status) => {
+  const updated = await messageModel.findOneAndUpdate(
+    { waid },
+    { status },
+    { new: true }
+  );
+  return updated;
+};
+
+module.exports = { messageModel, saveMessage, updateMessage };
