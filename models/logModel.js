@@ -7,6 +7,8 @@ const logSchema = mongoose.Schema(
   { timestamp: true }
 );
 
+const logModel = mongoose.model("Log", logSchema);
+
 const createLog = async (log) => {
   const messageSaved = await logModel.create({
     log: "iuhujnn",
@@ -14,7 +16,5 @@ const createLog = async (log) => {
 
   return messageSaved;
 };
-
-const logModel = mongoose.model("Log", logSchema);
 
 module.exports = { logModel, createLog };
