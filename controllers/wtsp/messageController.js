@@ -24,10 +24,12 @@ const sendMessage = async (req, res) => {
     return res.status(500).json({ error: "Use either template or message" });
 
   const errorLog = [];
+  let respon;
 
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
       .then(async function (response) {
+        respon = response.data;
         if (response.data.type && response.data.type !== "template")
           await saveMessage(response.data.to, response.data.body.text, false);
         else {
@@ -42,7 +44,7 @@ const sendMessage = async (req, res) => {
       });
   }
   if (errorLog.length !== 0) res.status(500).json({ message: errorLog });
-  else res.sendStatus(200);
+  else res.status(200).json(respon);
 };
 
 const recieveMessage = async (req, res) => {
