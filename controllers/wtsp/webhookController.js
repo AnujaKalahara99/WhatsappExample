@@ -1,4 +1,5 @@
 const { messageModel, saveMessage } = require("../../models/messageModel");
+const { createLog } = require("../../models/logModel");
 
 const verify = (req, res) => {
   if (
@@ -13,6 +14,7 @@ const verify = (req, res) => {
 
 const listenForReplies = async (req, res) => {
   let body = req.body;
+  createLog(JSON.stringify(body));
 
   if (body.object) {
     if (
