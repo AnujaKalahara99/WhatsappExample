@@ -37,11 +37,11 @@ const listenForReplies = async (req, res) => {
       body.entry &&
       body.entry[0].changes &&
       body.entry[0].changes[0] &&
-      body.entry[0].changes[0].statuses &&
-      body.entry[0].changes[0].statuses[0]
+      body.entry[0].changes[0].value.statuses &&
+      body.entry[0].changes[0].value.statuses[0]
     ) {
-      let waid = body.entry[0].changes[0].statuses[0].id;
-      let status = body.entry[0].changes[0].statuses[0].status;
+      let waid = body.entry[0].changes[0].value.statuses[0].id;
+      let status = body.entry[0].changes[0].value.statuses[0].status;
 
       const message = await updateMessage(waid, status);
       res.status(200).json(message);

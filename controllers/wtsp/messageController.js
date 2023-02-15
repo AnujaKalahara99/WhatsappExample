@@ -37,7 +37,7 @@ const sendMessage = async (req, res) => {
             response.data.messages[0].id,
             response.data.contacts[0].input,
             "business message",
-            "-",
+            "",
             false
           );
 
