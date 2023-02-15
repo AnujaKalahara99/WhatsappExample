@@ -28,8 +28,11 @@ const sendMessage = async (req, res) => {
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
       .then(async function (response) {
-        //if (response.data.type !== "template")
-        //await saveMessage(response.data.to, response.data.body.text, false);
+        if (response.data.type && response.data.type !== "template")
+          await saveMessage(response.data.to, response.data.body.text, false);
+        else {
+          //Extra Code needed to get Templates to a text format
+        }
       })
       .catch(function (error) {
         errorLog.push({
