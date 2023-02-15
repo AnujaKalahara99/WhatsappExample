@@ -1,5 +1,5 @@
 const express = require("express");
-const authHandler = require("./middleware/authHandler");
+const authHandler = require("../middleware/authHandler");
 const messageController = require("../controllers/wtsp/messageController");
 const templateController = require("../controllers/wtsp/templateController");
 const webhookController = require("../controllers/wtsp/webhookController");
