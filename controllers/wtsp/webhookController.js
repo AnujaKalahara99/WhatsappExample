@@ -14,8 +14,7 @@ const verify = (req, res) => {
 
 const listenForReplies = async (req, res) => {
   let body = req.body;
-  createLog("kdje");
-  console.log(body.toString());
+  createLog(JSON.stringify(body));
 
   if (body.object) {
     if (

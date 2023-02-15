@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const errorHandler = require("./middleware/errorHandler");
-const authHandler = require("./middleware/authHandler");
+//const authHandler = require("./middleware/authHandler");
 
 const wtspRouter = require("./routes/wtsp");
 const usersRouter = require("./routes/users");
@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/wtsp", authHandler, wtspRouter);
+app.use("/api/wtsp", wtspRouter);
 app.use("/api/users", usersRouter);
 
 app.get("/", (req, res) => {
