@@ -7,6 +7,7 @@ const errorHandler = require("./middleware/errorHandler");
 
 const wtspRouter = require("./routes/wtsp");
 const usersRouter = require("./routes/users");
+const contactsRouter = require("./routes/contacts");
 
 const connectDB = require("./config/db");
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/wtsp", wtspRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/contacts", contactsRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "HELLLLOO" });

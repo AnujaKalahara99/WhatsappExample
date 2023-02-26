@@ -28,7 +28,6 @@ const getAllTamplates = async (req, res) => {
 };
 
 const getTamplate = async (req, res) => {
-  console.log("GetAllTemplates");
   var config = {
     method: "get",
     url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates?name=${req.params.name}`,
@@ -81,10 +80,48 @@ const deleteTemplate = (req, res) => {
   return res.status(200).send("deleted template successfully");
 };
 
+const template2DBformat = async (templateData) => {
+  let headerVar = [];
+  let bodyVar = [];
+
+  templateData.template.components.forEach((com) => {
+    if (com.type === "header") {
+      headerVar = JSON.parse(com.parameters).map((e) => e.text);
+    } else if (com.type === "body") {
+      bodyVar = JSON.parse(com.parameters).map((e) => e.text);
+    }
+  });
+  var config = {
+    method: "get",
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates?name=${templateData.template.name}`,
+    headers: {
+      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+      "Accept-Encoding": "gzip,deflate,compress",
+    },
+  };
+  try {
+    const response = await axios(config);
+
+    const tempData = templateDataHelper.fillTemplateVariables(
+      response.data.data[0].components,
+      headerVar,
+      bodyVar
+    );
+    return tempData;
+  } catch (error) {
+    console.log(
+      (error.response && error.response.data && error.response.data.error) ||
+        error.toString()
+    );
+  }
+};
+
 module.exports = {
   getAllTamplates,
   getTamplate,
   createTemplate,
   editTemplate,
   deleteTemplate,
+  template2DBformat,
 };

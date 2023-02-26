@@ -1,10 +1,12 @@
 const axios = require("axios");
 const { messageModel, saveMessage } = require("../../models/messageModel");
+const { updateLastMessage } = require("../contacts/contactController");
 
 const {
   getTextMessageData,
   getTemplateMessageData,
 } = require("./messageDataHelper");
+const { template2DBformat } = require("./templateController");
 
 const sendMessage = async (req, res) => {
   const { to, template, message, body_params, header_params } = req.body;
@@ -23,44 +25,54 @@ const sendMessage = async (req, res) => {
   if (!data)
     return res.status(500).json({ error: "Use either template or message" });
 
-  const errorLog = [];
-  let respon;
+  const log = [];
 
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
       .then(async function (response) {
-        respon = response.data;
-        if (response.data.type && response.data.type !== "template")
-          await saveMessage(response.data.to, response.data.body.text, false);
-        else {
-          await saveMessage(
-            response.data.messages[0].id,
-            response.data.contacts[0].input,
-            "business message",
-            "",
-            false
-          );
-
-          //Extra Code needed to get Templates to a text format
+        const wa_id = response.data.messages[0].id;
+        const contact = response.data.contacts[0].wa_id;
+        let msg = "";
+        let footer = "";
+        let header = {};
+        if (data[i].type === "template") {
+          const tempData = await template2DBformat(data[i]);
+          msg = tempData.body;
+          if (tempData.footer) footer = tempData.footer;
+          if (tempData.header) header = tempData.header;
+        } else {
+          msg = data[i].text.body;
         }
+        const messageSaved = await saveMessage(
+          wa_id,
+          contact,
+          msg,
+          "",
+          false,
+          header,
+          footer
+        );
+        log.push(messageSaved._id);
+        //updateLastMessage(3, contact, messageSaved._id);
       })
       .catch(function (error) {
-        errorLog.push({
+        log.push({
           to: data[i].to,
-          error: error.response.data.error.message,
+          error:
+            (error.response &&
+              error.response.data &&
+              error.response.data.error &&
+              error.response.data.error.message) ||
+            error.toString(),
         });
       });
   }
-  if (errorLog.length !== 0) res.status(500).json({ message: errorLog });
-  else res.status(200).json(respon);
+  res.status(200).json(log);
 };
 
 const recieveMessage = async (req, res) => {
-  const { lastCheckedIndex } = req.body;
-
-  const messagesSaved = await messageModel.find({
-    index: { $gt: lastCheckedIndex },
-  });
+  const { contact, userId } = req.query;
+  const messagesSaved = await messageModel.find({ contact });
   res.status(200).json(messagesSaved);
 };
 
@@ -74,6 +86,7 @@ async function sendToWhatsappAPI(data) {
     },
     data: data,
   };
+
   return await axios(config);
 }
 

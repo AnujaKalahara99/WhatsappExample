@@ -29,7 +29,13 @@ const listenForReplies = async (req, res) => {
       let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
       let waid = body.entry[0].changes[0].value.messages[0].id;
 
-      const message = await saveMessage(waid, from, msg_body, null, true);
+      const message = await saveMessage(
+        waid,
+        from,
+        msg_body,
+        "delivered",
+        true
+      );
       res.status(200).json(message);
     }
     //Update Message

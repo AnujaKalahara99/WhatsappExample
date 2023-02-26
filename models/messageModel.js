@@ -19,7 +19,15 @@ const messageSchema = mongoose.Schema(
 
 const messageModel = mongoose.model("Messages", messageSchema);
 
-const saveMessage = async (waid, number, msg, status, recieved) => {
+const saveMessage = async (
+  waid,
+  number,
+  msg,
+  status,
+  recieved,
+  header,
+  footer
+) => {
   const count = await messageModel.count();
   const messageSaved = await messageModel.create({
     index: count,
@@ -27,9 +35,12 @@ const saveMessage = async (waid, number, msg, status, recieved) => {
     contact: number,
     isRecieved: recieved,
     status: status ? status : "",
-    header: { type: "", data: "" },
+    header: {
+      type: header.type ? header.type : "",
+      data: header.data ? header.data : "",
+    },
     body: msg,
-    footer: "",
+    footer: footer ? footer : "",
   });
   return messageSaved;
 };
