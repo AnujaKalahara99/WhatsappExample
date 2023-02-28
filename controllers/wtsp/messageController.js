@@ -44,6 +44,7 @@ const sendMessage = async (req, res) => {
           msg = data[i].text.body;
         }
         const messageSaved = await saveMessage(
+          req.user.userId,
           wa_id,
           contact,
           msg,

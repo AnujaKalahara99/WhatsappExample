@@ -1,17 +1,18 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const uuidv4 = require("uuid/v4");
 const asyncHandler = require("express-async-handler");
 const userModel = require("../../models/userModel");
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, waid } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !waid) {
     res.status(400);
-    throw new Error("Credentials (name, email, password) required");
+    throw new Error("Credentials (name, email, password, whatsappID) required");
   }
 
-  if (await userModel.exists({ email })) {
+  if (await userModel.exists({ $or: [{ email }, { waid }] })) {
     res.status(400);
     throw new Error("User already exists");
   }
@@ -20,16 +21,20 @@ const registerUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   const newUser = await userModel.create({
+    userId: uuidv4(),
     name,
     email,
     password: hashedPassword,
+    waid,
   });
 
   if (newUser) {
     res.status(201).json({
-      _id: newUser.id,
+      // _id: newUser.id,
+      userId: newUser.userId,
       name: newUser.name,
       email: newUser.email,
+      waid: newUser.waid,
       token: generateToke(newUser.id),
     });
   } else {
@@ -49,14 +54,14 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await userModel.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    res
-      .status(200)
-      .json({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        token: generateToke(user.id),
-      });
+    res.status(200).json({
+      // _id: user.id,
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      waid: newUser.waid,
+      token: generateToke(user.id),
+    });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -65,8 +70,14 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const getMe = asyncHandler(async (req, res) => {});
 
+const getUserId = asyncHandler(async (waid) => {
+  const user = await userModel.find({ waid });
+  if (user) return user.userId;
+  else return null;
+});
+
 const generateToke = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-module.exports = { registerUser, loginUser, getMe };
+module.exports = { registerUser, loginUser, getMe, getUserId };

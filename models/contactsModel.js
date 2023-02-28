@@ -27,9 +27,12 @@ const createContact = async (userId, wtsp, others) => {
 };
 
 const selectContacts = async (userId, filters) => {
-  const selected = await contactModel.find(filters);
-  //const deselected = await contactModel.find({ userId, $not: { filters } });
-  return { selected, deselected: [] };
+  delete filters["userId"];
+  const selected = await contactModel.find({ $and: [{ userId }, filters] });
+  const deselected = await contactModel.find({
+    $and: [{ userId }, { $nor: [filters] }],
+  });
+  return { selected, deselected };
 };
 
 const updateContact = async (contactId, updateTo) => {

@@ -1,5 +1,6 @@
 const { saveMessage, updateMessage } = require("../../models/messageModel");
 const { createLog } = require("../../models/logModel");
+const { getUserId } = require("../user/userController");
 
 const verify = (req, res) => {
   if (
@@ -28,8 +29,10 @@ const listenForReplies = async (req, res) => {
       let from = body.entry[0].changes[0].value.messages[0].from;
       let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
       let waid = body.entry[0].changes[0].value.messages[0].id;
+      let whatsappBusinessId = body.entry[0].id;
 
       const message = await saveMessage(
+        getUserId(whatsappBusinessId),
         waid,
         from,
         msg_body,

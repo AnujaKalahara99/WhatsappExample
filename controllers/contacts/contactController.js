@@ -23,15 +23,14 @@ const createNewContacts = async (req, res) => {
 const updateContact = async (req, res) => {};
 
 const selectContacts = asyncHandler(async (req, res) => {
-  const { userID } = req.params;
+  const { userId } = req.params;
   const { filters } = req.query;
 
-  console.log(req.params);
-  if (!userID) {
+  if (!userId) {
     res.status(500);
     throw new Error("No UserId");
   }
-  const response = await selectContactsDB(userID, filters);
+  const response = await selectContactsDB(userId, filters);
   return res
     .status(200)
     .json({ selected: response.selected, nonSelected: response.deselected });
@@ -44,10 +43,39 @@ const updateLastMessage = async (userId, wtsp, msgId) => {
   return contact;
 };
 
+const filterByTags = asyncHandler((req, res) => {
+  const { contactList, filterTags } = req.query;
+
+  if (!contactList) {
+    res.status(500);
+    throw new Error("No contacts to filter");
+  }
+
+  let filtered = [];
+  if (filterTags && filterTags.length !== 0) {
+    contactList.forEach((contact) => {
+      let found = true;
+      filterTags.forEach((tag) => {
+        if (contact.tags.indexOf(tag) === -1) {
+          found = false;
+          return;
+        }
+      });
+      if (found) {
+        filtered.push(contact);
+      }
+    });
+  } else {
+    filtered = contactList;
+  }
+  return res.status(200).json(filtered);
+});
+
 module.exports = {
   createNewContacts,
   updateContact,
   selectContacts,
   deleteContact,
   updateLastMessage,
+  filterByTags,
 };

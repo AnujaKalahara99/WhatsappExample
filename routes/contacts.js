@@ -6,6 +6,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/", authHandler, contactController.createNewContacts);
-router.get("/:userID", authHandler, contactController.selectContacts);
+router.get("/filterByTags", authHandler, contactController.filterByTags);
+router.get("/:userId", authHandler, contactController.selectContacts);
 
 module.exports = router;
