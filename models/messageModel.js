@@ -36,8 +36,8 @@ const saveMessage = async (
     isRecieved: recieved,
     status: status ? status : "",
     header: {
-      type: header.type ? header.type : "",
-      data: header.data ? header.data : "",
+      type: header && header.type ? header.type : "",
+      data: header && header.data ? header.data : "",
     },
     body: msg,
     footer: footer ? footer : "",
