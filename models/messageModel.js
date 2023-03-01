@@ -3,7 +3,6 @@ const { updateLastMessage } = require("./contactsModel");
 
 const messageSchema = mongoose.Schema(
   {
-    index: { type: Number, required: true, unique: true },
     userId: { type: String, required: true },
     waid: { type: String, required: true, unique: true },
     contact: { type: String, required: true },
@@ -31,9 +30,7 @@ const saveMessage = async (
   header,
   footer
 ) => {
-  const count = await messageModel.count();
   const messageSaved = await messageModel.create({
-    index: count,
     userId,
     waid,
     contact: number,
