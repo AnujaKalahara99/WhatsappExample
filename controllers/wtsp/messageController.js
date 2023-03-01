@@ -1,6 +1,10 @@
 const axios = require("axios");
+const asyncHandler = require("express-async-handler");
 const { messageModel, saveMessage } = require("../../models/messageModel");
-const { updateLastMessage } = require("../contacts/contactController");
+const {
+  updateLastMessage,
+  readContact,
+} = require("../contacts/contactController");
 
 const {
   getTextMessageData,
@@ -53,8 +57,13 @@ const sendMessage = async (req, res) => {
           header,
           footer
         );
+        await updateLastMessage(
+          req.user.userId,
+          contact,
+          msg,
+          messageSaved.createdAt
+        );
         log.push(messageSaved._id);
-        //updateLastMessage(3, contact, messageSaved._id);
       })
       .catch(function (error) {
         log.push({
@@ -72,10 +81,53 @@ const sendMessage = async (req, res) => {
 };
 
 const recieveMessage = async (req, res) => {
-  const { contact, userId } = req.query;
+  const { contact } = req.query;
   const messagesSaved = await messageModel.find({ contact });
   res.status(200).json(messagesSaved);
 };
+
+const markMessageRead = asyncHandler(async (req, res) => {
+  const { contact } = req.body;
+  const { userId } = req.user;
+  if (!contact) {
+    res.status(500);
+    throw new Error("No contact to mark messages read");
+  }
+
+  const messagesToRead = await messageModel.find({
+    $and: [
+      { contact },
+      { userId },
+      { isRecieved: true },
+      { status: { $exists: true, $ne: "read" } },
+    ],
+  });
+
+  messagesToRead.forEach(async (message) => {
+    var config = {
+      method: "post",
+      url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.PHONE_NUMBER_ID}/messages`,
+      headers: {
+        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        messaging_product: "whatsapp",
+        status: "read",
+        message_id: message.waid,
+      },
+    };
+
+    const response = await axios(config);
+    const updatedMessage = await messageModel.findByIdAndUpdate(message._id, {
+      status: "read",
+    });
+  });
+
+  const updatedContact = await readContact(userId, contact);
+
+  return res.status(200).json(updatedContact);
+});
 
 async function sendToWhatsappAPI(data) {
   var config = {
@@ -91,4 +143,4 @@ async function sendToWhatsappAPI(data) {
   return await axios(config);
 }
 
-module.exports = { sendMessage, recieveMessage };
+module.exports = { sendMessage, recieveMessage, markMessageRead };

@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/messages/", authHandler, messageController.sendMessage);
+router.post("/messages/read", authHandler, messageController.markMessageRead);
 router.get("/messages/", authHandler, messageController.recieveMessage);
 
 router.get("/templates/", authHandler, templateController.getAllTamplates);

@@ -3,10 +3,10 @@ const asyncHandler = require("express-async-handler");
 
 const {
   contactModel,
-  createContact: createContactDB,
-  selectContacts: selectContactsDB,
-  updateContact: updateContactDB,
-  updateLastMessage: updateLastMessageDB,
+  createContactDB,
+  selectContactsDB,
+  updateContactDB,
+  updateLastMessageDB,
 } = require("../../models/contactsModel");
 
 const createNewContacts = async (req, res) => {
@@ -42,8 +42,8 @@ const selectContacts = asyncHandler(async (req, res) => {
 
 const deleteContact = async () => {};
 
-const updateLastMessage = async (userId, wtsp, msgId) => {
-  const contact = await updateLastMessageDB(3, wtsp, msgId, new Date());
+const updateLastMessage = async (userId, wtsp, msg, time) => {
+  const contact = await updateLastMessageDB(userId, wtsp, msg, time);
   return contact;
 };
 
@@ -75,6 +75,33 @@ const filterByTags = asyncHandler((req, res) => {
   return res.status(200).json(filtered);
 });
 
+const getRecent = asyncHandler(async (req, res) => {
+  const { userId } = req.user;
+
+  if (!userId) {
+    res.status(500);
+    throw new Error("No UserId");
+  }
+  const response = await selectContactsDB(userId, {
+    lastMessage: { $exists: true, $ne: "" },
+  });
+  return res
+    .status(200)
+    .json({ selected: response.selected, nonSelected: response.deselected });
+});
+
+const readContact = async (userId, wtsp) => {
+  if (!userId || !wtsp) {
+    throw new Error("No UserId or wtsp number to mark read");
+  }
+
+  return await contactModel.findOneAndUpdate(
+    { userId, wtsp },
+    { unreadMessageCount: 0 },
+    { new: true }
+  );
+};
+
 module.exports = {
   createNewContacts,
   updateContact,
@@ -82,4 +109,6 @@ module.exports = {
   deleteContact,
   updateLastMessage,
   filterByTags,
+  getRecent,
+  readContact,
 };

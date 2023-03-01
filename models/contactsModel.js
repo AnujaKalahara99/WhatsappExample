@@ -19,14 +19,14 @@ const contactSchema = mongoose.Schema(
 
 const contactModel = mongoose.model("Contact", contactSchema);
 
-const createContact = async (userId, wtsp, others) => {
+const createContactDB = async (userId, wtsp, others) => {
   const existingContact = await contactModel.findOne({ userId, wtsp });
   if (existingContact) return null;
   const contact = await contactModel.create({ userId, wtsp, ...others });
   return contact;
 };
 
-const selectContacts = async (userId, filters) => {
+const selectContactsDB = async (userId, filters) => {
   delete filters["userId"];
   const selected = await contactModel.find({ $and: [{ userId }, filters] });
   const deselected = await contactModel.find({
@@ -35,12 +35,12 @@ const selectContacts = async (userId, filters) => {
   return { selected, deselected };
 };
 
-const updateContact = async (contactId, updateTo) => {
+const updateContactDB = async (contactId, updateTo) => {
   return await contactModel.findByIdAndUpdate(contactId, { ...updateTo });
 };
 
-const updateLastMessage = async (userId, wtsp, msg, time) => {
-  const contact = await contactModel.findById(contactId);
+const updateLastMessageDB = async (userId, wtsp, msg, time) => {
+  const contact = await contactModel.findOne({ $and: [{ userId }, { wtsp }] });
   if (!contact) return null;
   const unreadMessageCount = contact.unreadMessageCount
     ? contact.unreadMessageCount + 1
@@ -50,13 +50,13 @@ const updateLastMessage = async (userId, wtsp, msg, time) => {
     { lastMessage: msg, lastMessageTime: time, unreadMessageCount },
     { new: true }
   );
-  return updateContact;
+  return updatedContact;
 };
 
 module.exports = {
   contactModel,
-  createContact,
-  selectContacts,
-  updateContact,
-  updateLastMessage,
+  createContactDB,
+  selectContactsDB,
+  updateContactDB,
+  updateLastMessageDB,
 };

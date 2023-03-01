@@ -7,6 +7,7 @@ router.use(express.json());
 
 router.post("/", authHandler, contactController.createNewContacts);
 router.get("/filterByTags", authHandler, contactController.filterByTags);
+router.get("/recentMessages", authHandler, contactController.getRecent);
 router.get("/", authHandler, contactController.selectContacts);
 
 module.exports = router;

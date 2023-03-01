@@ -1,6 +1,7 @@
 const { saveMessage, updateMessage } = require("../../models/messageModel");
 const { createLog } = require("../../models/logModel");
 const { getUserId } = require("../user/userController");
+const { updateLastMessage } = require("../contacts/contactController");
 
 const verify = (req, res) => {
   if (
@@ -18,6 +19,8 @@ const listenForReplies = async (req, res) => {
   createLog(JSON.stringify(body));
 
   if (body.object) {
+    let userId = await getUserId(body.entry[0].id);
+
     //Create Messsage
     if (
       body.entry &&
@@ -29,18 +32,20 @@ const listenForReplies = async (req, res) => {
       let from = body.entry[0].changes[0].value.messages[0].from;
       let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
       let waid = body.entry[0].changes[0].value.messages[0].id;
-      let whatsappBusinessId = body.entry[0].id;
 
       const message = await saveMessage(
-        getUserId(whatsappBusinessId),
+        userId,
         waid,
         from,
         msg_body,
         "delivered",
         true
       );
+      updateLastMessage(userId, from, waid);
+
       res.status(200).json(message);
     }
+
     //Update Message
     else if (
       body.entry &&

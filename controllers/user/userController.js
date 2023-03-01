@@ -70,11 +70,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const getMe = asyncHandler(async (req, res) => {});
 
-const getUserId = asyncHandler(async (waid) => {
+const getUserId = async (waid) => {
   const user = await userModel.find({ waid });
   if (user) return user.userId;
   else return null;
-});
+};
 
 const generateToke = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
