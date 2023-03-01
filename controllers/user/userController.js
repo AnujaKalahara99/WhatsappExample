@@ -59,7 +59,7 @@ const loginUser = asyncHandler(async (req, res) => {
       userId: user.userId,
       name: user.name,
       email: user.email,
-      waid: newUser.waid,
+      waid: user.waid,
       token: generateToke(user.id),
     });
   } else {
