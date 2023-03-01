@@ -14,7 +14,11 @@ const createNewContacts = async (req, res) => {
   contacts = req.body;
 
   contacts.forEach(async (element, i) => {
-    const contact = await createContactDB(3, element.wtsp, element);
+    const contact = await createContactDB(
+      req.user.userId,
+      element.wtsp,
+      element
+    );
     log[i] = contact ? contact : "Not Saved Error";
   });
   return res.status(200).json(log);
@@ -23,7 +27,7 @@ const createNewContacts = async (req, res) => {
 const updateContact = async (req, res) => {};
 
 const selectContacts = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.user;
   const { filters } = req.query;
 
   if (!userId) {
