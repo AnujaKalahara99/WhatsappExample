@@ -71,7 +71,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const getMe = asyncHandler(async (req, res) => {});
 
 const getUserId = async (waid) => {
-  const user = await userModel.find({ waid });
+  const user = await userModel.findOne({ waid });
   if (user) return user.userId;
   else return null;
 };

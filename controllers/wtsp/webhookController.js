@@ -19,7 +19,7 @@ const listenForReplies = async (req, res) => {
   createLog(JSON.stringify(body));
 
   if (body.object) {
-    let userId = await getUserId(body.entry[0].id);
+    const userId = await getUserId(body.entry[0].id);
     res.status(200).json(userId);
 
     //Create Messsage
