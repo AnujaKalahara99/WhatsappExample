@@ -20,7 +20,6 @@ const listenForReplies = async (req, res) => {
 
   if (body.object) {
     const userId = await getUserId(body.entry[0].id);
-    res.status(200).json(userId);
 
     //Create Messsage
     if (
@@ -30,9 +29,9 @@ const listenForReplies = async (req, res) => {
       body.entry[0].changes[0].value.messages &&
       body.entry[0].changes[0].value.messages[0]
     ) {
-      let from = body.entry[0].changes[0].value.messages[0].from;
-      let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
-      let waid = body.entry[0].changes[0].value.messages[0].id;
+      const from = body.entry[0].changes[0].value.messages[0].from;
+      const msg_body = body.entry[0].changes[0].value.messages[0].text.body;
+      const waid = body.entry[0].changes[0].value.messages[0].id;
 
       const message = await saveMessage(
         userId,
@@ -55,8 +54,8 @@ const listenForReplies = async (req, res) => {
       body.entry[0].changes[0].value.statuses &&
       body.entry[0].changes[0].value.statuses[0]
     ) {
-      let waid = body.entry[0].changes[0].value.statuses[0].id;
-      let status = body.entry[0].changes[0].value.statuses[0].status;
+      const waid = body.entry[0].changes[0].value.statuses[0].id;
+      const status = body.entry[0].changes[0].value.statuses[0].status;
 
       const message = await updateMessage(waid, status);
       res.status(200).json(message);
