@@ -41,7 +41,7 @@ const listenForReplies = async (req, res) => {
         "delivered",
         true
       );
-      updateLastMessage(userId, from, waid);
+      await updateLastMessage(userId, from, waid);
 
       res.status(200).json(message);
     }
