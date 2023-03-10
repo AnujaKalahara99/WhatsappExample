@@ -13,10 +13,10 @@ const {
 const { template2DBformat } = require("./templateController");
 
 const sendMessage = async (req, res) => {
-  const { to, template, message, body_params, header_params } = req.body;
+  const { to, template, message, body_params, header_params, language } = req.body;
   let data = null;
   if (template && template !== "") {
-    data = getTemplateMessageData(to, template, body_params, header_params);
+    data = getTemplateMessageData(to, template, body_params, header_params, language);
   } else if (message && message !== "") {
     data = getTextMessageData(to, message);
   }

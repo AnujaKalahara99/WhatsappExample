@@ -14,11 +14,10 @@ const getAllTamplates = async (req, res) => {
   };
   return await axios(config)
     .then(function (response) {
-      return res
-        .status(200)
-        .send(
-          response.data.data.filter((template) => template.language === "en")
-        );
+      return res.status(200).send(
+        response.data.data
+        // response.data.data.filter((template) => template.language === "en" || template.language === "en_US")
+      );
     })
     .catch(function (error) {
       return res
@@ -27,6 +26,7 @@ const getAllTamplates = async (req, res) => {
     });
 };
 
+//Not Refrenced. Also when returning a value only return english language from array of same name templates
 const getTamplate = async (req, res) => {
   var config = {
     method: "get",
@@ -86,7 +86,9 @@ const template2DBformat = async (templateData) => {
 
   templateData.template.components.forEach((com) => {
     if (com.type === "header") {
-      headerVar = JSON.parse(com.parameters).map((e) => e.text);
+      headerVar = JSON.parse(com.parameters).map((e) =>
+        e.text ? e.text : e[e.type].link
+      );
     } else if (com.type === "body") {
       bodyVar = JSON.parse(com.parameters).map((e) => e.text);
     }
@@ -111,7 +113,8 @@ const template2DBformat = async (templateData) => {
     return tempData;
   } catch (error) {
     console.log(
-      (error.response && error.response.data && error.response.data.error) ||
+      "Error : " +
+        (error.response && error.response.data && error.response.data.error) ||
         error.toString()
     );
   }

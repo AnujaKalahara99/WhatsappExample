@@ -31,6 +31,7 @@ function readable2wtsp(data) {
   return template;
 }
 
+//To Convert to DB friendly format
 function fillTemplateVariables(components, headerVar, bodyVar) {
   const template = {};
   components.forEach((com) => {
@@ -39,6 +40,11 @@ function fillTemplateVariables(components, headerVar, bodyVar) {
         template.header = {
           type: com.format.toLowerCase(),
           data: stringReplace(com.text, /({{\d+}})/g, headerVar),
+        };
+      else
+        template.header = {
+          type: com.format.toLowerCase(),
+          data: headerVar[0],
         };
     } else if (com.type === "BODY") {
       template.body = stringReplace(com.text, /({{\d+}})/g, bodyVar);

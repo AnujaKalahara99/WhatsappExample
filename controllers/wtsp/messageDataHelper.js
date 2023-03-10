@@ -19,7 +19,8 @@ function getTemplateMessageData(
   recipients,
   template,
   body_param,
-  header_param
+  header_param,
+  language
 ) {
   const data = [];
   recipients.forEach((recipient) => {
@@ -30,7 +31,7 @@ function getTemplateMessageData(
       template: {
         name: template,
         language: {
-          code: "en",
+          code: language ? language : "en",
           policy: "deterministic",
         },
         components: [
@@ -60,10 +61,10 @@ function mapBodyParameters(param) {
 
 function mapHeaderParameters(param) {
   const paramObject = param.map((value) => {
-    const mediaType = Object.keys(value)[0];
+    const mediaType = Object.keys(value)[0].toLowerCase();
     var json = { type: mediaType };
     json[mediaType] = {
-      link: "https://www.invoicesimple.com/wp-content/uploads/2022/12/InvoiceSimple-PDF-Template.pdf",
+      link: Object.values(value)[0],
     };
     return json;
   });

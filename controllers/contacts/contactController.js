@@ -77,14 +77,26 @@ const filterByTags = asyncHandler((req, res) => {
 
 const getRecent = asyncHandler(async (req, res) => {
   const { userId } = req.user;
+  const { contact } = req.query;
 
   if (!userId) {
     res.status(500);
     throw new Error("No UserId");
   }
-  const response = await selectContactsDB(userId, {
-    lastMessage: { $exists: true, $ne: "" },
-  });
+
+  let response = { selected: [], deselected: [] };
+
+  if (contact) {
+    //Get Specific contact details only
+    response = await selectContactsDB(userId, {
+      lastMessage: { $exists: true, $ne: "" },
+      wtsp: contact,
+    });
+  } else {
+    response = await selectContactsDB(userId, {
+      lastMessage: { $exists: true, $ne: "" },
+    });
+  }
   return res
     .status(200)
     .json({ selected: response.selected, nonSelected: response.deselected });
