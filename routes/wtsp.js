@@ -1,6 +1,8 @@
 const express = require("express");
+const multer = require("multer");
 const authHandler = require("../middleware/authHandler");
 const messageController = require("../controllers/wtsp/messageController");
+const mediaController = require("../controllers/wtsp/mediaController");
 const templateController = require("../controllers/wtsp/templateController");
 const webhookController = require("../controllers/wtsp/webhookController");
 
@@ -10,6 +12,17 @@ router.use(express.json());
 router.post("/messages/", authHandler, messageController.sendMessage);
 router.post("/messages/read", authHandler, messageController.markMessageRead);
 router.get("/messages/", authHandler, messageController.recieveMessage);
+
+var storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: function (req, file, callback) {
+    callback(null, file.originalname);
+  },
+});
+var upload = multer({ storage: storage }).single("file");
+
+router.get("/media/:mediaId", authHandler, mediaController.getMedia);
+router.post("/media", authHandler, upload, mediaController.uploadMedia);
 
 router.get("/templates/", authHandler, templateController.getAllTamplates);
 router.get("/templates/:name", authHandler, templateController.getTamplate);

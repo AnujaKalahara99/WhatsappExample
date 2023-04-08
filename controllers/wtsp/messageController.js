@@ -13,10 +13,17 @@ const {
 const { template2DBformat } = require("./templateController");
 
 const sendMessage = async (req, res) => {
-  const { to, template, message, body_params, header_params, language } = req.body;
+  const { to, template, message, body_params, header_params, language } =
+    req.body;
   let data = null;
   if (template && template !== "") {
-    data = getTemplateMessageData(to, template, body_params, header_params, language);
+    data = getTemplateMessageData(
+      to,
+      template,
+      body_params,
+      header_params,
+      language
+    );
   } else if (message && message !== "") {
     data = getTextMessageData(to, message);
   }
@@ -30,6 +37,7 @@ const sendMessage = async (req, res) => {
     return res.status(500).json({ error: "Use either template or message" });
 
   const log = [];
+  let logContainsErrors = false;
 
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
@@ -66,6 +74,7 @@ const sendMessage = async (req, res) => {
         log.push(messageSaved._id);
       })
       .catch(function (error) {
+        logContainsErrors = true;
         log.push({
           to: data[i].to,
           error:
@@ -77,6 +86,7 @@ const sendMessage = async (req, res) => {
         });
       });
   }
+  if (logContainsErrors) return res.status(500).json(log);
   res.status(200).json(log);
 };
 
@@ -103,6 +113,7 @@ const markMessageRead = asyncHandler(async (req, res) => {
     ],
   });
 
+  const updatedMessages = [];
   messagesToRead.forEach(async (message) => {
     var config = {
       method: "post",
@@ -122,11 +133,12 @@ const markMessageRead = asyncHandler(async (req, res) => {
     const updatedMessage = await messageModel.findByIdAndUpdate(message._id, {
       status: "read",
     });
+    updatedMessages.push(updatedMessage);
   });
 
   const updatedContact = await readContact(userId, contact);
 
-  return res.status(200).json(updatedContact);
+  return res.status(200).json(updatedMessages);
 });
 
 async function sendToWhatsappAPI(data) {

@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const formidable = require("formidable");
 require("dotenv").config();
 
 const errorHandler = require("./middleware/errorHandler");
@@ -15,6 +16,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/wtsp", wtspRouter);
 app.use("/api/users", usersRouter);
