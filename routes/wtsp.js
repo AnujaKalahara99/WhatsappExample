@@ -14,7 +14,7 @@ router.post("/messages/read", authHandler, messageController.markMessageRead);
 router.get("/messages/", authHandler, messageController.recieveMessage);
 
 var storage = multer.diskStorage({
-  destination: "uploads/",
+  destination: "tmp/",
   filename: function (req, file, callback) {
     callback(null, file.originalname);
   },

@@ -3,27 +3,6 @@ const FormData = require("form-data");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
 
-// const uploadMedia = asyncHandler(async (req, res) => {
-//   const formData = new FormData();
-//   const fileBuffer = Buffer.from(req.body, "base64");
-//   formData.append("file", fileBuffer, "hooba.jp`g");
-//   formData.append("type", "image/jpeg");
-//   formData.append("messaging_product", "whatsapp");
-
-//   var config = {
-//     method: "post",
-//     url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.PHONE_NUMBER_ID}/media`,
-//     headers: {
-//       Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
-//       ...formData.getHeaders(),
-//     },
-//     data: formData,
-//   };
-
-//   const response = await axios(config);
-//   return res.status(200).json(response.data);
-// });
-
 const uploadMedia = asyncHandler(async (req, res) => {
   const formData = new FormData();
   const fileBuffer = fs.createReadStream(req.file.path);
@@ -46,6 +25,7 @@ const uploadMedia = asyncHandler(async (req, res) => {
   return res.status(200).json(response.data);
 });
 
+//Return byte array, not the media
 const getMedia = asyncHandler(async (req, res) => {
   var config = {
     method: "get",
@@ -57,8 +37,8 @@ const getMedia = asyncHandler(async (req, res) => {
 
   const response = await axios(config);
   if (response.status === 200) {
-    console.log(response.data);
-    return res.status(200).send(await downloadMedia(response.data.url));
+    const mediaResponse = await downloadMedia(response.data.url);
+    return res.status(200).send(mediaResponse);
   }
   return res.status(500).json(response.status);
 });
@@ -73,7 +53,7 @@ const downloadMedia = async (url) => {
   };
 
   const response = await axios(config);
-  return response.data;
+  return response;
 };
 
 module.exports = { uploadMedia, getMedia };
