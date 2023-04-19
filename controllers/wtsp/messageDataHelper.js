@@ -60,14 +60,26 @@ function mapBodyParameters(param) {
 }
 
 function mapHeaderParameters(param) {
-  const paramObject = param.map((value) => {
-    const mediaType = Object.keys(value)[0].toLowerCase();
-    var json = { type: mediaType };
-    json[mediaType] = {
-      link: Object.values(value)[0],
-    };
-    return json;
-  });
+  let paramObject = {};
+
+  if (param.length < 2) {
+    media = param[0];
+    const mediaType = Object.keys(media)[0];
+    const mediaData = { ...media[mediaType] };
+    if (mediaType === "IMAGE") delete mediaData["filename"];
+    paramObject = [
+      {
+        type: mediaType.toLowerCase(),
+        [mediaType.toLowerCase()]: mediaData,
+      },
+    ];
+  } else {
+    paramObject = param.map((value) => ({
+      type: "text",
+      text: value,
+    }));
+  }
+
   const json = JSON.stringify(paramObject, null, 2);
   return json;
 }

@@ -14,10 +14,15 @@ const getAllTamplates = async (req, res) => {
   };
   return await axios(config)
     .then(function (response) {
-      return res.status(200).send(
-        response.data.data
-        // response.data.data.filter((template) => template.language === "en" || template.language === "en_US")
-      );
+      return res
+        .status(200)
+        .send(
+          response.data.data.filter(
+            (template) =>
+              (template.language === "en" || template.language === "en_US") &&
+              template.status === "APPROVED"
+          )
+        );
     })
     .catch(function (error) {
       return res
