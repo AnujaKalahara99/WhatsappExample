@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const path = require("path");
 const authHandler = require("../middleware/authHandler");
 const messageController = require("../controllers/wtsp/messageController");
 const mediaController = require("../controllers/wtsp/mediaController");
@@ -14,7 +15,9 @@ router.post("/messages/read", authHandler, messageController.markMessageRead);
 router.get("/messages/", authHandler, messageController.recieveMessage);
 
 var storage = multer.diskStorage({
-  destination: "/tmp",
+  destination: function (req, file, callback) {
+    callback(null, "/tmp");
+  },
   filename: function (req, file, callback) {
     callback(null, file.originalname);
   },

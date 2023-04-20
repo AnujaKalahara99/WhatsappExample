@@ -24,6 +24,8 @@ const uploadMedia = asyncHandler(async (req, res) => {
 
   const response = await axios(config);
   //delete the tmp file
+  console.log(req.file.path);
+  // console.log("hooba/baabaa/var/task".replace("var/task", ""));
   fs.unlinkSync(req.file.path);
   return res.status(200).json(response.data);
 });
