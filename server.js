@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const formidable = require("formidable");
 require("dotenv").config();
 
 const errorHandler = require("./middleware/errorHandler");
