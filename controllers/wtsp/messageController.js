@@ -11,6 +11,7 @@ const {
   getTemplateMessageData,
 } = require("./messageDataHelper");
 const { template2DBformat } = require("./templateController");
+const { downloadMediaImage } = require("./mediaController");
 
 const sendMessage = async (req, res) => {
   const { to, template, message, body_params, header_params, language } =
@@ -51,10 +52,14 @@ const sendMessage = async (req, res) => {
           const tempData = await template2DBformat(data[i]);
           msg = tempData.body;
           if (tempData.footer) footer = tempData.footer;
-          if (tempData.header) header = tempData.header;
+          if (tempData.header) {
+            header = tempData.header;
+            // header.temp = downloadMediaImage();
+          }
         } else {
           msg = data[i].text.body;
         }
+        // console.log("Header ", header);
         const messageSaved = await saveMessage(
           req.user.userId,
           wa_id,

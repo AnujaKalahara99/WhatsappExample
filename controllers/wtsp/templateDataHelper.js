@@ -1,3 +1,5 @@
+const { downloadMediaImage } = require("./mediaController");
+
 function wtsp2readable(temp) {
   if (!temp || !temp.data[0]) return {};
 
@@ -32,45 +34,48 @@ function readable2wtsp(data) {
 }
 
 //To Convert to DB friendly format
-function fillTemplateVariables(components, headerVar, bodyVar) {
-  const template = {};
-  components.forEach((com) => {
+async function fillTemplateVariables(components, headerVar, bodyVar) {
+  let template = {};
+
+  for (const com of components) {
     if (com.type === "HEADER") {
       if (com.format === "TEXT")
         template.header = {
           type: com.format.toLowerCase(),
           data: stringReplace(com.text, /({{\d+}})/g, headerVar),
         };
-      else
+      else {
         template.header = {
           type: com.format.toLowerCase(),
           data: headerVar[0],
+          media: /^\d+$/.test(headerVar[0])
+            ? await downloadMediaImage(headerVar[0])
+            : "",
         };
+      }
     } else if (com.type === "BODY") {
       template.body = stringReplace(com.text, /({{\d+}})/g, bodyVar);
     } else if (com.type === "FOOTER") {
       template.footer = com.text;
     }
-  });
-  return template;
-
-  function stringReplace(text, search, replaceWith) {
-    let parsedText = "";
-    const pieces = text
-      .split(search)
-      .filter((t) => !new RegExp(search).test(t));
-    if (pieces.length < 2) return text;
-    for (let i = 0; i < pieces.length - 1; i++) {
-      let joinWith = "";
-      if (replaceWith && replaceWith.length > i)
-        joinWith = replaceWith[i] ? replaceWith[i] : joinWith;
-      const joined = pieces[i] + joinWith;
-      parsedText += joined;
-    }
-
-    parsedText += pieces[pieces.length - 1];
-    return parsedText;
   }
+  return template;
+}
+
+function stringReplace(text, search, replaceWith) {
+  let parsedText = "";
+  const pieces = text.split(search).filter((t) => !new RegExp(search).test(t));
+  if (pieces.length < 2) return text;
+  for (let i = 0; i < pieces.length - 1; i++) {
+    let joinWith = "";
+    if (replaceWith && replaceWith.length > i)
+      joinWith = replaceWith[i] ? replaceWith[i] : joinWith;
+    const joined = pieces[i] + joinWith;
+    parsedText += joined;
+  }
+
+  parsedText += pieces[pieces.length - 1];
+  return parsedText;
 }
 
 module.exports = { readable2wtsp, wtsp2readable, fillTemplateVariables };

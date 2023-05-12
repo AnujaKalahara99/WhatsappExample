@@ -11,6 +11,7 @@ const messageSchema = mongoose.Schema(
     header: {
       type: { type: String },
       data: { type: String },
+      media: { type: String },
     },
     body: { type: String, required: true },
     footer: { type: String },
@@ -39,6 +40,7 @@ const saveMessage = async (
     header: {
       type: header && header.type ? header.type : "",
       data: header && header.data ? header.data : "",
+      media: header && header.media ? header.media : "",
     },
     body: msg,
     footer: footer ? footer : "",

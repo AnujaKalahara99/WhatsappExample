@@ -23,7 +23,7 @@ function getTemplateMessageData(
   language
 ) {
   const data = [];
-  recipients.forEach((recipient) => {
+  recipients.forEach((recipient, recipientIndex) => {
     data.push({
       messaging_product: "whatsapp",
       to: recipient,
@@ -37,11 +37,13 @@ function getTemplateMessageData(
         components: [
           {
             type: "header",
-            parameters: header_param && mapHeaderParameters(header_param),
+            parameters:
+              header_param && mapHeaderParameters(header_param, recipientIndex),
           },
           {
             type: "body",
-            parameters: body_param && mapBodyParameters(body_param),
+            parameters:
+              body_param && mapBodyParameters(body_param, recipientIndex),
           },
         ],
       },
@@ -50,19 +52,20 @@ function getTemplateMessageData(
   return data;
 }
 
-function mapBodyParameters(param) {
+function mapBodyParameters(param, i) {
   const paramObject = param.map((value) => ({
     type: "text",
-    text: value,
+    text: value.constructor === Array ? (value[i] ? value[i] : "") : value,
   }));
   const json = JSON.stringify(paramObject, null, 2);
   return json;
 }
 
-function mapHeaderParameters(param) {
+function mapHeaderParameters(param, i) {
   let paramObject = {};
 
-  if (param.length < 2) {
+  //check if header param includes a type of media
+  if (param.length === 1 && Object.keys(param[0])[0]) {
     media = param[0];
     const mediaType = Object.keys(media)[0];
     const mediaData = { ...media[mediaType] };

@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
-// var pdf2img = require("pdf-img-convert");
+var pdf2img = require("pdf-img-convert");
 
 //multer intercepts and saves formdata file in tmp folder...available on req.file
 const uploadMedia = asyncHandler(async (req, res) => {
@@ -24,8 +24,7 @@ const uploadMedia = asyncHandler(async (req, res) => {
 
   const response = await axios(config);
   //delete the tmp file
-  console.log(req.file.path);
-  // console.log("hooba/baabaa/var/task".replace("var/task", ""));
+  // console.log(req.file.path);
   fs.unlinkSync(req.file.path);
   return res.status(200).json(response.data);
 });
@@ -49,12 +48,12 @@ const getMedia = asyncHandler(async (req, res) => {
     let file = mediaResponse.data;
     //return a temp image if file is pdf and temp in request's query params
     if (mimeType === "application/pdf" && req.query.temp) {
-      // const imgArray = await pdf2img.convert(file, {
-      //   width: 250,
-      //   height: 250,
-      //   page_numbers: [1],
-      // });
-      // file = imgArray[0];
+      const imgArray = await pdf2img.convert(file, {
+        width: 250,
+        height: 250,
+        page_numbers: [1],
+      });
+      file = imgArray[0];
     }
 
     //Here your saved file needs to be encoded to base 64.
@@ -97,4 +96,39 @@ const downloadMedia = async (url) => {
   return file;
 };
 
-module.exports = { uploadMedia, getMedia };
+const downloadMediaImage = async (mediaId) => {
+  var config = {
+    method: "get",
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${mediaId}`,
+    headers: {
+      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+    },
+  };
+
+  const response = await axios(config);
+  const mimeType = response.data.mime_type;
+
+  if (response.status === 200) {
+    const mediaResponse = await downloadMedia(response.data.url);
+
+    let file = mediaResponse.data;
+    //return a temp image if file is pdf and temp in request's query params
+    if (mimeType === "application/pdf") {
+      const imgArray = await pdf2img.convert(file, {
+        width: 250,
+        height: 250,
+        page_numbers: [1],
+      });
+      file = imgArray[0];
+    }
+
+    //Here your saved file needs to be encoded to base 64.
+    const fileBuffer = Buffer.from(file).toString("base64");
+
+    // const fileType = mimeType === "application/pdf" ? "image/png" : mimeType;
+    return `data:${mimeType};base64,` + fileBuffer;
+  }
+  return "";
+};
+
+module.exports = { uploadMedia, getMedia, downloadMediaImage };

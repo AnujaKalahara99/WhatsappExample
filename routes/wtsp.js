@@ -1,6 +1,5 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
 const authHandler = require("../middleware/authHandler");
 const messageController = require("../controllers/wtsp/messageController");
 const mediaController = require("../controllers/wtsp/mediaController");

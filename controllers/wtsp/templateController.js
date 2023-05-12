@@ -92,7 +92,7 @@ const template2DBformat = async (templateData) => {
   templateData.template.components.forEach((com) => {
     if (com.type === "header") {
       headerVar = JSON.parse(com.parameters).map((e) =>
-        e.text ? e.text : e[e.type].link
+        e.text ? e.text : e[e.type].link ? e[e.type].link : e[e.type].id
       );
     } else if (com.type === "body") {
       bodyVar = JSON.parse(com.parameters).map((e) => e.text);
@@ -109,8 +109,7 @@ const template2DBformat = async (templateData) => {
   };
   try {
     const response = await axios(config);
-
-    const tempData = templateDataHelper.fillTemplateVariables(
+    const tempData = await templateDataHelper.fillTemplateVariables(
       response.data.data[0].components,
       headerVar,
       bodyVar
