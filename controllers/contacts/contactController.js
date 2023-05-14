@@ -15,7 +15,7 @@ const createNewContacts = async (req, res) => {
 
   contacts.forEach(async (element, i) => {
     const contact = await createContactDB(
-      req.user.userId,
+      req.user._id, //Maybe Problematic
       element.wtsp,
       element
     );
@@ -27,7 +27,8 @@ const createNewContacts = async (req, res) => {
 const updateContact = async (req, res) => {};
 
 const selectContacts = asyncHandler(async (req, res) => {
-  const { userId } = req.user;
+  const { _id } = req.user;
+  const userId = _id.toString();
   const { filters } = req.query;
 
   if (!userId) {
@@ -76,7 +77,8 @@ const filterByTags = asyncHandler((req, res) => {
 });
 
 const getRecent = asyncHandler(async (req, res) => {
-  const { userId } = req.user;
+  const { _id } = req.user;
+  const userId = _id.toString();
   const { contact } = req.query;
 
   if (!userId) {

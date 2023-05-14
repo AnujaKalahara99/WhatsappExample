@@ -61,7 +61,7 @@ const sendMessage = async (req, res) => {
         }
         // console.log("Header ", header);
         const messageSaved = await saveMessage(
-          req.user.userId,
+          req.user._id,
           wa_id,
           contact,
           msg,
@@ -71,7 +71,7 @@ const sendMessage = async (req, res) => {
           footer
         );
         await updateLastMessage(
-          req.user.userId,
+          req.user._id,
           contact,
           msg,
           messageSaved.createdAt

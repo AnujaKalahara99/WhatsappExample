@@ -2,11 +2,11 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const errorHandler = require("./middleware/errorHandler");
-//const authHandler = require("./middleware/authHandler");
+const { errorHandler } = require("./middleware/errormiddleware");
+const authHandler = require("./middleware/authmiddleware");
 
 const wtspRouter = require("./routes/wtsp");
-const usersRouter = require("./routes/users");
+const usersRouter = require("./routes/userroutes");
 const contactsRouter = require("./routes/contacts");
 
 const connectDB = require("./config/db");

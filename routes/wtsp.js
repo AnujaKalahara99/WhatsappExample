@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const authHandler = require("../middleware/authHandler");
+const { protect: authHandler } = require("../middleware/authmiddleware");
 const messageController = require("../controllers/wtsp/messageController");
 const mediaController = require("../controllers/wtsp/mediaController");
 const templateController = require("../controllers/wtsp/templateController");

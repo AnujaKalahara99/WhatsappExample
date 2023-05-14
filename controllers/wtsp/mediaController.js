@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
-var pdf2img = require("pdf-img-convert");
+// var pdf2img = require("pdf-img-convert");
 
 //multer intercepts and saves formdata file in tmp folder...available on req.file
 const uploadMedia = asyncHandler(async (req, res) => {
@@ -47,14 +47,14 @@ const getMedia = asyncHandler(async (req, res) => {
 
     let file = mediaResponse.data;
     //return a temp image if file is pdf and temp in request's query params
-    if (mimeType === "application/pdf" && req.query.temp) {
-      const imgArray = await pdf2img.convert(file, {
-        width: 250,
-        height: 250,
-        page_numbers: [1],
-      });
-      file = imgArray[0];
-    }
+    // if (mimeType === "application/pdf" && req.query.temp) {
+    //   const imgArray = await pdf2img.convert(file, {
+    //     width: 250,
+    //     height: 250,
+    //     page_numbers: [1],
+    //   });
+    //   file = imgArray[0];
+    // }
 
     //Here your saved file needs to be encoded to base 64.
     const fileBuffer = Buffer.from(file, "base64");
@@ -113,14 +113,14 @@ const downloadMediaImage = async (mediaId) => {
 
     let file = mediaResponse.data;
     //return a temp image if file is pdf and temp in request's query params
-    if (mimeType === "application/pdf") {
-      const imgArray = await pdf2img.convert(file, {
-        width: 250,
-        height: 250,
-        page_numbers: [1],
-      });
-      file = imgArray[0];
-    }
+    // if (mimeType === "application/pdf") {
+    //   const imgArray = await pdf2img.convert(file, {
+    //     width: 250,
+    //     height: 250,
+    //     page_numbers: [1],
+    //   });
+    //   file = imgArray[0];
+    // }
 
     //Here your saved file needs to be encoded to base 64.
     const fileBuffer = Buffer.from(file).toString("base64");
