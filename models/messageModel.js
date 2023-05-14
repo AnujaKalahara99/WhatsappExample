@@ -13,7 +13,7 @@ const messageSchema = mongoose.Schema(
       data: { type: String },
       media: { type: String },
     },
-    body: { type: String, required: true },
+    body: { type: Object, required: true },
     footer: { type: String },
   },
   { timestamps: true }

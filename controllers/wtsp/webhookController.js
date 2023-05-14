@@ -2,6 +2,7 @@ const { saveMessage, updateMessage } = require("../../models/messageModel");
 const { createLog } = require("../../models/logModel");
 const { getUserId } = require("../user/userController");
 const { updateLastMessage } = require("../contacts/contactController");
+const { downloadMediaImage } = require("./mediaController");
 
 const verify = (req, res) => {
   if (
@@ -31,8 +32,20 @@ const listenForReplies = async (req, res) => {
       body.entry[0].changes[0].value.messages[0]
     ) {
       const from = body.entry[0].changes[0].value.messages[0].from;
-      const msg_body = body.entry[0].changes[0].value.messages[0].text.body;
+      const msg_body = body.entry[0].changes[0].value.messages[0].text?.body;
+      const header = { type: "", data: "", media: "" };
+      const msg_img = body.entry[0].changes[0].value.messages[0].image;
+      const msg_doc = body.entry[0].changes[0].value.messages[0].document;
       const waid = body.entry[0].changes[0].value.messages[0].id;
+      if (msg_img) {
+        header.data = msg_img.id;
+        header.type = "image";
+        header.media = await downloadMediaImage(msg_img.id);
+      } else if (msg_doc) {
+        header.data = msg_doc.id;
+        header.type = "document";
+        header.media = await downloadMediaImage(msg_doc.id);
+      }
 
       const message = await saveMessage(
         userId,
@@ -40,7 +53,8 @@ const listenForReplies = async (req, res) => {
         from,
         msg_body,
         "delivered",
-        true
+        true,
+        header
       );
       await updateLastMessage(userId, from, msg_body);
 

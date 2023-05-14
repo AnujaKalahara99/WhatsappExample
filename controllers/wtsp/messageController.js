@@ -52,12 +52,11 @@ const sendMessage = async (req, res) => {
           const tempData = await template2DBformat(data[i]);
           msg = tempData.body;
           if (tempData.footer) footer = tempData.footer;
-          if (tempData.header) {
-            header = tempData.header;
-            // header.temp = downloadMediaImage();
-          }
+          if (tempData.header) header = tempData.header;
         } else {
-          msg = data[i].text.body;
+          msgData = await msg2DBFormat(data[i]);
+          msg = msgData.body;
+          if (tempData.header) header = tempData.header;
         }
         // console.log("Header ", header);
         const messageSaved = await saveMessage(

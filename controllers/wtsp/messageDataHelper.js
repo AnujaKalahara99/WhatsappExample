@@ -1,4 +1,6 @@
-function getTextMessageData(recipients, text) {
+const { downloadMediaImage } = require("./mediaController");
+
+function getTextMessageData(recipients, message) {
   const data = [];
   recipients.forEach((recipient) => {
     data.push({
@@ -6,10 +8,8 @@ function getTextMessageData(recipients, text) {
       preview_url: false,
       recipient_type: "individual",
       to: recipient,
-      type: "text",
-      text: {
-        body: text,
-      },
+      type: message.type,
+      [message.type]: message.data,
     });
   });
   return data;
@@ -87,7 +87,20 @@ function mapHeaderParameters(param, i) {
   return json;
 }
 
+const msg2DBFormat = async (msg) => {
+  let msgData = {};
+  if (msg.type === "text") msgData.body = msg.data.body;
+  else if (msg.type && msg.type !== "")
+    msgData.header = {
+      type: msg.type,
+      data: msg.data.id,
+      media: await downloadMediaImage(msg.data.id),
+    };
+  return msgData;
+};
+
 module.exports = {
-  getTextMessageData: getTextMessageData,
-  getTemplateMessageData: getTemplateMessageData,
+  getTextMessageData,
+  getTemplateMessageData,
+  msg2DBFormat,
 };
