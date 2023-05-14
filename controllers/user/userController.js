@@ -100,7 +100,9 @@ const generatetoken = (id) => {
 };
 
 const getUserId = async (waid) => {
-  return await user.find(waid);
+  console.log(waid);
+  const userData = await user.find({ waid });
+  return userData[0]._id.toString();
 };
 
 module.exports = {
