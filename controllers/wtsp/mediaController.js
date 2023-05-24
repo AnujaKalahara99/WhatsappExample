@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
-// var pdf2img = require("pdf-img-convert");
+var pdf2img = require("pdf-img-convert");
 
 //multer intercepts and saves formdata file in tmp folder...available on req.file
 const uploadMedia = asyncHandler(async (req, res) => {
@@ -24,7 +24,6 @@ const uploadMedia = asyncHandler(async (req, res) => {
 
   const response = await axios(config);
   //delete the tmp file
-  // console.log(req.file.path);
   fs.unlinkSync(req.file.path);
   return res.status(200).json(response.data);
 });
@@ -47,7 +46,7 @@ const getMedia = asyncHandler(async (req, res) => {
 
     let file = mediaResponse.data;
     //return a temp image if file is pdf and temp in request's query params
-    // if (mimeType === "application/pdf" && req.query.temp) {
+    // if (mimeType === "application/pdf" && req.query.temp === true) {
     //   const imgArray = await pdf2img.convert(file, {
     //     width: 250,
     //     height: 250,
@@ -86,11 +85,16 @@ const downloadMedia = async (url) => {
 
   const response = await axios(config);
   const contentDis = response.headers["content-disposition"];
+  let fileName = contentDis.slice(
+    contentDis.indexOf("filename=") + "filename=".length
+  );
+  const nameArray = fileName.split(";");
+  fileName = nameArray && nameArray.length > 0 ? nameArray[0] : fileName;
+  console.log(contentDis);
+
   const file = {
     data: response.data,
-    name: contentDis.slice(
-      contentDis.indexOf("filename=") + "filename=".length
-    ),
+    name: fileName,
   };
 
   return file;

@@ -9,9 +9,9 @@ const {
 const {
   getTextMessageData,
   getTemplateMessageData,
+  msg2DBFormat,
 } = require("./messageDataHelper");
 const { template2DBformat } = require("./templateController");
-const { downloadMediaImage } = require("./mediaController");
 
 const sendMessage = async (req, res) => {
   const { to, template, message, body_params, header_params, language } =
@@ -56,9 +56,9 @@ const sendMessage = async (req, res) => {
         } else {
           msgData = await msg2DBFormat(data[i]);
           msg = msgData.body;
-          if (tempData.header) header = tempData.header;
+          if (msgData.header) header = msgData.header;
         }
-        // console.log("Header ", header);
+
         const messageSaved = await saveMessage(
           req.user._id,
           wa_id,
@@ -102,7 +102,7 @@ const recieveMessage = async (req, res) => {
 
 const markMessageRead = asyncHandler(async (req, res) => {
   const { contact } = req.body;
-  const { userId } = req.user;
+  userId = req.user._id;
   if (!contact) {
     res.status(500);
     throw new Error("No contact to mark messages read");

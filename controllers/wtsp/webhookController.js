@@ -21,8 +21,6 @@ const listenForReplies = async (req, res) => {
 
   if (body.object) {
     const userId = await getUserId(body.entry[0].id);
-    console.log("userId ", userId);
-
     //Create Messsage
     if (
       body.entry &&

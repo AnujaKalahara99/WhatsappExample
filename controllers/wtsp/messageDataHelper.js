@@ -9,7 +9,8 @@ function getTextMessageData(recipients, message) {
       recipient_type: "individual",
       to: recipient,
       type: message.type,
-      [message.type]: message.data,
+      [message.type]:
+        message.type === "text" ? message.data : { id: message.data },
     });
   });
   return data;
@@ -89,13 +90,15 @@ function mapHeaderParameters(param, i) {
 
 const msg2DBFormat = async (msg) => {
   let msgData = {};
-  if (msg.type === "text") msgData.body = msg.data.body;
-  else if (msg.type && msg.type !== "")
+  if (msg.type === "text") msgData.body = msg.text.body;
+  else if (msg.type && msg.type !== "") {
+    const media = await downloadMediaImage(msg[msg.type].id);
     msgData.header = {
       type: msg.type,
-      data: msg.data.id,
-      media: await downloadMediaImage(msg.data.id),
+      data: msg[msg.type].id,
+      media: media ? media : "",
     };
+  }
   return msgData;
 };
 
