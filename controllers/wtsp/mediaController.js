@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
-var pdf2img = require("pdf-img-convert");
+// var pdf2img = require("pdf-img-convert");
 
 //multer intercepts and saves formdata file in tmp folder...available on req.file
 const uploadMedia = asyncHandler(async (req, res) => {
