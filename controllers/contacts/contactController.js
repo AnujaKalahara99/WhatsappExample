@@ -8,6 +8,7 @@ const {
   updateContactDB,
   updateLastMessageDB,
 } = require("../../models/contactsModel");
+const { getUserId } = require("../user/userController");
 
 const createNewContacts = async (req, res) => {
   const log = [];

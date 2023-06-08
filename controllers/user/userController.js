@@ -109,8 +109,8 @@ const generatetoken = (id) => {
 };
 
 const getUserId = async (waid) => {
-  const userData = await user.find({ waid });
-  return userData[0].id.toString();
+  const userData = await user.findOne({ waid });
+  return userData._id.toString();
 };
 
 const expense = async (userId, cost) => {
