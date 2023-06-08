@@ -109,6 +109,7 @@ const generatetoken = (id) => {
 };
 
 const getUserId = async (waid) => {
+  console.log(waid);
   const userData = await user.findOne({ waid });
   return userData._id.toString();
 };
@@ -120,7 +121,7 @@ const expense = async (userId, cost) => {
   const reminder = balance - cost;
   if (reminder < 0) return { error: "Insufficient Balance" };
 
-  await user.findOneAndReplace({ _id: userId }, { balance: reminder });
+  await user.findByIdAndUpdate(userId, { balance: reminder });
   return { data: reminder };
 };
 
