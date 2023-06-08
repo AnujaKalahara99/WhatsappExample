@@ -38,11 +38,13 @@ const listenForReplies = async (req, res) => {
       if (msg_img) {
         header.data = msg_img.id;
         header.type = "image";
-        header.media = await downloadMediaImage(msg_img.id);
+        const mediaFile = await downloadMediaImage(msg_img.id);
+        header.media = mediaFile.media;
       } else if (msg_doc) {
         header.data = msg_doc.id;
         header.type = "document";
-        header.media = await downloadMediaImage(msg_doc.id);
+        const mediaFile = await downloadMediaImage(msg_doc.id);
+        header.media = mediaFile.media;
       }
 
       const message = await saveMessage(
