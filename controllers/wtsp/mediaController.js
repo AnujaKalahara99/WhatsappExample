@@ -90,7 +90,6 @@ const downloadMedia = async (url) => {
   );
   const nameArray = fileName.split(";");
   fileName = nameArray && nameArray.length > 0 ? nameArray[0] : fileName;
-  console.log(contentDis);
 
   const file = {
     data: response.data,
@@ -130,7 +129,10 @@ const downloadMediaImage = async (mediaId) => {
     const fileBuffer = Buffer.from(file).toString("base64");
 
     // const fileType = mimeType === "application/pdf" ? "image/png" : mimeType;
-    return `data:${mimeType};base64,` + fileBuffer;
+    return {
+      media: `data:${mimeType};base64,` + fileBuffer,
+      fileName: mediaResponse.name,
+    };
   }
   return "";
 };

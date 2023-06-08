@@ -42,6 +42,7 @@ const registeruser = asynchandler(async (req, res) => {
     waid,
     facebooklink,
     contactnumberstate,
+    balance: 200,
   });
 
   if (users) {
@@ -51,6 +52,7 @@ const registeruser = asynchandler(async (req, res) => {
       email: users.email,
       waid: users.waid,
       token: generatetoken(users._id),
+      balance: users.balance,
     });
   } else {
     res.status(400);
@@ -72,6 +74,7 @@ const loginuser = asynchandler(async (req, res) => {
       name: users.name,
       email: users.email,
       token: generatetoken(users._id),
+      balance: users.balance,
     });
   } else {
     res.status(400);
@@ -92,6 +95,12 @@ const getme = asynchandler(async (req, res) => {
   });
 });
 
+const getBalance = asynchandler(async (req, res) => {
+  const { balance } = await user.findById(req.user.id);
+
+  res.status(200).json({ balance });
+});
+
 // Generate the jwt
 const generatetoken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -100,14 +109,26 @@ const generatetoken = (id) => {
 };
 
 const getUserId = async (waid) => {
-  console.log(waid);
   const userData = await user.find({ waid });
-  return userData[0]._id.toString();
+  return userData[0].id.toString();
+};
+
+const expense = async (userId, cost) => {
+  const account = await user.findOne({ _id: userId });
+  if (!account) return { error: "Invalid UserId" };
+  const balance = account.balance;
+  const reminder = balance - cost;
+  if (reminder < 0) return { error: "Insufficient Balance" };
+
+  await user.findOneAndReplace({ _id: userId }, { balance: reminder });
+  return { data: reminder };
 };
 
 module.exports = {
   registeruser,
   loginuser,
   getme,
+  getBalance,
   getUserId,
+  expense,
 };

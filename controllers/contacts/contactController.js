@@ -43,8 +43,20 @@ const selectContacts = asyncHandler(async (req, res) => {
 
 const deleteContact = async () => {};
 
-const updateLastMessage = async (userId, wtsp, msg, time) => {
-  const contact = await updateLastMessageDB(userId, wtsp, msg, time);
+const updateLastMessage = async (
+  userId,
+  wtsp,
+  msg,
+  updateUnreadCount,
+  time
+) => {
+  const contact = await updateLastMessageDB(
+    userId,
+    wtsp,
+    msg,
+    updateUnreadCount,
+    time
+  );
   return contact;
 };
 

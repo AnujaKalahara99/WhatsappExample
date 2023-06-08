@@ -12,6 +12,7 @@ const {
   msg2DBFormat,
 } = require("./messageDataHelper");
 const { template2DBformat } = require("./templateController");
+const { expense } = require("../user/userController");
 
 const sendMessage = async (req, res) => {
   const { to, template, message, body_params, header_params, language } =
@@ -39,6 +40,10 @@ const sendMessage = async (req, res) => {
 
   const log = [];
   let logContainsErrors = false;
+
+  const cost = data.length * 5.31;
+  const costResponse = await expense(req.user._id, cost);
+  if (costResponse.error) return res.status(500).json(costResponse.error);
 
   for (let i = 0; i < data.length; i++) {
     await sendToWhatsappAPI(data[i])
@@ -73,6 +78,7 @@ const sendMessage = async (req, res) => {
           req.user._id,
           contact,
           msg,
+          false,
           messageSaved.createdAt
         );
         log.push(messageSaved._id);
@@ -90,13 +96,15 @@ const sendMessage = async (req, res) => {
         });
       });
   }
-  if (logContainsErrors) return res.status(500).json(log);
-  res.status(200).json(log);
+  // if (logContainsErrors) return res.status(500).json(log);
+  res.status(logContainsErrors === true ? 500 : 200).json(log);
 };
 
 const recieveMessage = async (req, res) => {
   const { contact } = req.query;
   const messagesSaved = await messageModel.find({ contact });
+  // .sort({ _id: "descending" })
+  // .limit(12);
   res.status(200).json(messagesSaved);
 };
 

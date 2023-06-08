@@ -10,6 +10,7 @@ const userschema = mongoose.Schema(
     },
     password: { type: String, required: [true, "Please add a password"] },
     waid: { type: String, required: true },
+    balance: { type: Number },
   },
   {
     timestamps: true,

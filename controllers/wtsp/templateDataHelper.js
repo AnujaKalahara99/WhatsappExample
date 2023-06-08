@@ -45,12 +45,15 @@ async function fillTemplateVariables(components, headerVar, bodyVar) {
           data: stringReplace(com.text, /({{\d+}})/g, headerVar),
         };
       else {
+        const mediaFile = /^\d+$/.test(headerVar[0])
+          ? await downloadMediaImage(headerVar[0])
+          : null;
+
         template.header = {
           type: com.format.toLowerCase(),
           data: headerVar[0],
-          media: /^\d+$/.test(headerVar[0])
-            ? await downloadMediaImage(headerVar[0])
-            : "",
+          media: mediaFile?.media,
+          fileName: mediaFile?.fileName,
         };
       }
     } else if (com.type === "BODY") {

@@ -39,12 +39,22 @@ const updateContactDB = async (contactId, updateTo) => {
   return await contactModel.findByIdAndUpdate(contactId, { ...updateTo });
 };
 
-const updateLastMessageDB = async (userId, wtsp, msg, time) => {
+const updateLastMessageDB = async (
+  userId,
+  wtsp,
+  msg,
+  updateUnreadCount = true,
+  time
+) => {
   const contact = await contactModel.findOne({ $and: [{ userId }, { wtsp }] });
   if (!contact) return null;
-  const unreadMessageCount = contact.unreadMessageCount
+  let unreadMessageCount = contact.unreadMessageCount
     ? contact.unreadMessageCount + 1
     : 1;
+  if (updateUnreadCount == false)
+    unreadMessageCount = contact.unreadMessageCount
+      ? contact.unreadMessageCount
+      : 0;
   const updatedContact = await contactModel.findOneAndUpdate(
     { userId, wtsp },
     { lastMessage: msg, lastMessageTime: time, unreadMessageCount },

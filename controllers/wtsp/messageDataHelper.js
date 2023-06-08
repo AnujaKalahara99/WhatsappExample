@@ -92,11 +92,19 @@ const msg2DBFormat = async (msg) => {
   let msgData = {};
   if (msg.type === "text") msgData.body = msg.text.body;
   else if (msg.type && msg.type !== "") {
-    const media = await downloadMediaImage(msg[msg.type].id);
+    // const media = await downloadMediaImage(msg[msg.type].id);
+    // msgData.header = {
+    //   type: msg.type,
+    //   data: msg[msg.type].id,
+    //   media: media ? media : "",
+    // };
+    const mediaFile = await downloadMediaImage(msg[msg.type].id);
+
     msgData.header = {
       type: msg.type,
       data: msg[msg.type].id,
-      media: media ? media : "",
+      media: mediaFile?.media,
+      fileName: mediaFile?.fileName,
     };
   }
   return msgData;
