@@ -56,16 +56,30 @@ const updateLastMessageDB = async (
     unreadMessageCount = contact.unreadMessageCount
       ? contact.unreadMessageCount
       : 0;
-  const updatedContact = await contactModel.findOneAndUpdate(
-    { userId, wtsp },
-    {
-      lastMessage: msg,
-      lastMessageTime: time,
-      unreadMessageCount,
-      lastConversationTime: conversationTimeOut,
-    },
-    { new: true }
-  );
+
+  let updatedContact;
+  if (msg) {
+    updatedContact = await contactModel.findOneAndUpdate(
+      { userId, wtsp },
+      {
+        lastMessage: msg,
+        lastMessageTime: time,
+        unreadMessageCount,
+        lastConversationTime: conversationTimeOut,
+      },
+      { new: true }
+    );
+  } else {
+    updatedContact = await contactModel.findOneAndUpdate(
+      { userId, wtsp },
+      {
+        lastMessageTime: time,
+        unreadMessageCount,
+        lastConversationTime: conversationTimeOut,
+      },
+      { new: true }
+    );
+  }
   return updatedContact;
 };
 
