@@ -25,6 +25,7 @@ const getAllTamplates = async (req, res) => {
         );
     })
     .catch(function (error) {
+      console.log(error);
       return res
         .status(error.response.status)
         .json({ error: error.response.data.error });

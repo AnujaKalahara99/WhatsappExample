@@ -56,7 +56,9 @@ const listenForReplies = async (req, res) => {
         true,
         header
       );
-      await updateLastMessage(userId, from, msg_body, true);
+
+      const msg_last = header.type ? "#!" + header.type : msg_body;
+      await updateLastMessage(userId, from, msg_last, true);
 
       res.status(200).json(message);
     }
@@ -71,8 +73,14 @@ const listenForReplies = async (req, res) => {
     ) {
       const waid = body.entry[0].changes[0].value.statuses[0].id;
       const status = body.entry[0].changes[0].value.statuses[0].status;
+      let conversationTimeOut;
+      if (status === "sent") {
+        conversationTimeOut =
+          body.entry[0].changes[0].value.statuses[0].conversation
+            .expiration_timestamp;
+      }
 
-      const message = await updateMessage(waid, status);
+      const message = await updateMessage(waid, status, conversationTimeOut);
       res.status(200).json(message);
     } else {
       res.sendStatus(404);
