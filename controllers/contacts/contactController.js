@@ -49,14 +49,16 @@ const updateLastMessage = async (
   wtsp,
   msg,
   updateUnreadCount,
-  time
+  time,
+  conversationTimeOut
 ) => {
   const contact = await updateLastMessageDB(
     userId,
     wtsp,
     msg,
     updateUnreadCount,
-    time
+    time,
+    conversationTimeOut
   );
   return contact;
 };

@@ -50,11 +50,10 @@ const saveMessage = async (
   return messageSaved;
 };
 
-const updateMessage = async (waid, status, timeOut) => {
+const updateMessage = async (waid, status) => {
   const updated = await messageModel.findOneAndUpdate(
     { waid },
     { status },
-    { lastConversationTime: timeOut },
     { new: true }
   );
   return updated;

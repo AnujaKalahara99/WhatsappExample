@@ -80,7 +80,14 @@ const listenForReplies = async (req, res) => {
             .expiration_timestamp;
       }
 
-      const message = await updateMessage(waid, status, conversationTimeOut);
+      const message = await updateMessage(waid, status);
+      await updateLastMessage(
+        userId,
+        from,
+        msg_last,
+        true,
+        conversationTimeOut
+      );
       res.status(200).json(message);
     } else {
       res.sendStatus(404);

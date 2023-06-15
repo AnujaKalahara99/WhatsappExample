@@ -44,7 +44,8 @@ const updateLastMessageDB = async (
   wtsp,
   msg,
   updateUnreadCount = true,
-  time
+  time,
+  conversationTimeOut
 ) => {
   const contact = await contactModel.findOne({ $and: [{ userId }, { wtsp }] });
   if (!contact) return null;
@@ -57,7 +58,12 @@ const updateLastMessageDB = async (
       : 0;
   const updatedContact = await contactModel.findOneAndUpdate(
     { userId, wtsp },
-    { lastMessage: msg, lastMessageTime: time, unreadMessageCount },
+    {
+      lastMessage: msg,
+      lastMessageTime: time,
+      unreadMessageCount,
+      lastConversationTime: conversationTimeOut,
+    },
     { new: true }
   );
   return updatedContact;
