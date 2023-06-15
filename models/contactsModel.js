@@ -11,7 +11,7 @@ const contactSchema = mongoose.Schema(
     tags: { type: Array },
     lastMessage: { type: String },
     lastMessageTime: { type: Date },
-    lastConversationTime: { type: Date },
+    lastConversationTime: { type: Number },
     unreadMessageCount: { type: Number },
   },
   { timestamp: true }
@@ -44,8 +44,7 @@ const updateLastMessageDB = async (
   wtsp,
   msg,
   updateUnreadCount = true,
-  time,
-  conversationTimeOut
+  time
 ) => {
   const contact = await contactModel.findOne({ $and: [{ userId }, { wtsp }] });
   if (!contact) return null;
@@ -57,29 +56,30 @@ const updateLastMessageDB = async (
       ? contact.unreadMessageCount
       : 0;
 
-  let updatedContact;
-  if (msg) {
-    updatedContact = await contactModel.findOneAndUpdate(
-      { userId, wtsp },
-      {
-        lastMessage: msg,
-        lastMessageTime: time,
-        unreadMessageCount,
-        lastConversationTime: conversationTimeOut,
-      },
-      { new: true }
-    );
-  } else {
-    updatedContact = await contactModel.findOneAndUpdate(
-      { userId, wtsp },
-      {
-        lastMessageTime: time,
-        unreadMessageCount,
-        lastConversationTime: conversationTimeOut,
-      },
-      { new: true }
-    );
-  }
+  const updatedContact = await contactModel.findOneAndUpdate(
+    { userId, wtsp },
+    {
+      lastMessage: msg,
+      lastMessageTime: time,
+      unreadMessageCount,
+    },
+    { new: true }
+  );
+  return updatedContact;
+};
+
+const updateConversationTimeOutDB = async (
+  userId,
+  wtsp,
+  conversationTimeOut
+) => {
+  const updatedContact = await contactModel.findOneAndUpdate(
+    { userId, wtsp },
+    {
+      lastConversationTime: conversationTimeOut,
+    },
+    { new: true }
+  );
   return updatedContact;
 };
 
@@ -89,4 +89,5 @@ module.exports = {
   selectContactsDB,
   updateContactDB,
   updateLastMessageDB,
+  updateConversationTimeOutDB,
 };

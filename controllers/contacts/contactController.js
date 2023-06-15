@@ -7,6 +7,7 @@ const {
   selectContactsDB,
   updateContactDB,
   updateLastMessageDB,
+  updateConversationTimeOutDB,
 } = require("../../models/contactsModel");
 const { getUserId } = require("../user/userController");
 
@@ -52,15 +53,24 @@ const updateLastMessage = async (
   time,
   conversationTimeOut
 ) => {
-  const contact = await updateLastMessageDB(
-    userId,
-    wtsp,
-    msg,
-    updateUnreadCount,
-    time,
-    conversationTimeOut
-  );
-  return contact;
+  if (!msg && !time) {
+    const contact = await updateConversationTimeOutDB(
+      userId,
+      wtsp,
+      conversationTimeOut
+    );
+    return contact;
+  } else {
+    const contact = await updateLastMessageDB(
+      userId,
+      wtsp,
+      msg,
+      updateUnreadCount,
+      time,
+      conversationTimeOut
+    );
+    return contact;
+  }
 };
 
 const filterByTags = asyncHandler((req, res) => {

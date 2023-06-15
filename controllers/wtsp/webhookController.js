@@ -82,7 +82,14 @@ const listenForReplies = async (req, res) => {
       }
 
       const message = await updateMessage(waid, status);
-      await updateLastMessage(userId, from, null, false, conversationTimeOut);
+      await updateLastMessage(
+        userId,
+        from,
+        null,
+        false,
+        null,
+        conversationTimeOut
+      );
       res.status(200).json(message);
     } else {
       res.sendStatus(404);
