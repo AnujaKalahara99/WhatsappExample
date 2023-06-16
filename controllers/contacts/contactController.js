@@ -101,7 +101,7 @@ const updateLastMessage = async (
   time,
   conversationTimeOut
 ) => {
-  if (!msg && !time) {
+  if (!msg && !time && conversationTimeOut) {
     const contact = await updateConversationTimeOutDB(
       userId,
       wtsp,
@@ -114,8 +114,7 @@ const updateLastMessage = async (
       wtsp,
       msg,
       updateUnreadCount,
-      time,
-      conversationTimeOut
+      time
     );
     return contact;
   }
