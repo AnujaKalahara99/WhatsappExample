@@ -109,7 +109,6 @@ const generatetoken = (id) => {
 };
 
 const getUserId = async (waid) => {
-  console.log(waid);
   const userData = await user.findOne({ waid });
   return userData._id.toString();
 };

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const asyncHandler = require("express-async-handler");
 
 const contactSchema = mongoose.Schema(
   {
@@ -26,14 +27,15 @@ const createContactDB = async (userId, wtsp, others) => {
   return contact;
 };
 
-const selectContactsDB = async (userId, filters) => {
+const selectContactsDB = asyncHandler(async (userId, filters) => {
+  filters = { ...filters, userId };
   delete filters["userId"];
   const selected = await contactModel.find({ $and: [{ userId }, filters] });
   const deselected = await contactModel.find({
     $and: [{ userId }, { $nor: [filters] }],
   });
   return { selected, deselected };
-};
+});
 
 const updateContactDB = async (contactId, updateTo) => {
   return await contactModel.findByIdAndUpdate(contactId, { ...updateTo });

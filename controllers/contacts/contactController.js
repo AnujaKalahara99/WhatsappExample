@@ -9,22 +9,43 @@ const {
   updateLastMessageDB,
   updateConversationTimeOutDB,
 } = require("../../models/contactsModel");
+
 const { getUserId } = require("../user/userController");
 
-const createNewContacts = async (req, res) => {
+const createNewContacts = asyncHandler(async (req, res) => {
   const log = [];
   contacts = req.body;
 
   contacts.forEach(async (element, i) => {
-    const contact = await createContactDB(
-      req.user._id, //Maybe Problematic
-      element.wtsp,
-      element
-    );
-    log[i] = contact ? contact : "Not Saved Error";
+    if (!element.name) {
+      res.status(400);
+      throw new Error("Please add contact name");
+    }
+
+    if (!element.wtsp) {
+      res.status(400);
+      throw new Error("Please add contact number");
+    }
+
+    if (!element.tags) {
+      res.status(400);
+      throw new Error("Please add contact tag");
+    }
+
+    const contactdata = await createContactDB(req.user.id, element.wtsp, {
+      name: element.name,
+      tags: element.tags,
+    });
+    // const contact = await createContactDB(
+    //   req.user._id, //Maybe Problematic
+    //   element.wtsp,
+    //   element
+    // );
+    log.push(contactdata);
+    // log[i] = contact ? contact : "Not Saved Error";
   });
   return res.status(200).json(log);
-};
+});
 
 const updateContact = async (req, res) => {};
 
@@ -37,13 +58,40 @@ const selectContacts = asyncHandler(async (req, res) => {
     res.status(500);
     throw new Error("No UserId");
   }
+
   const response = await selectContactsDB(userId, filters);
   return res
     .status(200)
     .json({ selected: response.selected, nonSelected: response.deselected });
 });
 
-const deleteContact = async () => {};
+// @desc    Delete contact details
+// @route   DELETE /api/contactsmanager/:id
+// @access  Private
+const deleteContact = asyncHandler(async (req, res) => {
+  const Contact_out = await contactModel.findById(req.params.id);
+
+  if (!Contact_out) {
+    res.status(400);
+    throw new Error("Contact not found");
+  }
+
+  // Check for user
+  if (!req.user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Make sure the logged in user matches the contact user
+  if (Contact_out.userId !== req.user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
+
+  await Contact_out.remove();
+
+  res.status(200).json({ id: req.params.id });
+});
 
 const updateLastMessage = async (
   userId,
@@ -129,6 +177,11 @@ const getRecent = asyncHandler(async (req, res) => {
     .json({ selected: response.selected, nonSelected: response.deselected });
 });
 
+const getAllUniqueTags = asyncHandler(async (req, res) => {
+  const contactdata = await contactModel.distinct("tags");
+  res.status(200).json(contactdata);
+});
+
 const readContact = async (userId, wtsp) => {
   if (!userId || !wtsp) {
     throw new Error("No UserId or wtsp number to mark read");
@@ -150,4 +203,5 @@ module.exports = {
   filterByTags,
   getRecent,
   readContact,
+  getAllUniqueTags,
 };

@@ -9,6 +9,7 @@ const wtspRouter = require("./routes/wtsp");
 const usersRouter = require("./routes/userroutes");
 const contactsRouter = require("./routes/contacts");
 const campaignRouter = require("./routes/campaign");
+const contactsManagerRouter = require("./routes/contactManagement");
 
 const connectDB = require("./config/db");
 
@@ -22,6 +23,8 @@ app.use("/api/wtsp", wtspRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/contacts", contactsRouter);
 app.use("/api/campaign", campaignRouter);
+
+app.use("/api/contactsmanager", contactsManagerRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "HELLLLOO" });
