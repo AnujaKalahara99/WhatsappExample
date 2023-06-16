@@ -98,26 +98,25 @@ const updateLastMessage = async (
   wtsp,
   msg,
   updateUnreadCount,
-  time,
-  conversationTimeOut
+  time
 ) => {
-  if (!msg && !time && conversationTimeOut) {
-    const contact = await updateConversationTimeOutDB(
-      userId,
-      wtsp,
-      conversationTimeOut
-    );
-    return contact;
-  } else {
-    const contact = await updateLastMessageDB(
-      userId,
-      wtsp,
-      msg,
-      updateUnreadCount,
-      time
-    );
-    return contact;
-  }
+  const contact = await updateLastMessageDB(
+    userId,
+    wtsp,
+    msg,
+    updateUnreadCount,
+    time
+  );
+  return contact;
+};
+
+const updateConversationTimeOut = async (userId, wtsp, conversationTimeOut) => {
+  const contact = await updateConversationTimeOutDB(
+    userId,
+    wtsp,
+    conversationTimeOut
+  );
+  return contact;
 };
 
 const filterByTags = asyncHandler((req, res) => {
@@ -199,6 +198,7 @@ module.exports = {
   selectContacts,
   deleteContact,
   updateLastMessage,
+  updateConversationTimeOut,
   filterByTags,
   getRecent,
   readContact,

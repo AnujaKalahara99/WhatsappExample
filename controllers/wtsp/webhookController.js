@@ -1,7 +1,10 @@
 const { saveMessage, updateMessage } = require("../../models/messageModel");
 const { createLog } = require("../../models/logModel");
 const { getUserId } = require("../user/userController");
-const { updateLastMessage } = require("../contacts/contactController");
+const {
+  updateLastMessage,
+  updateConversationTimeOut,
+} = require("../contacts/contactController");
 const { downloadMediaImage } = require("./mediaController");
 
 const verify = (req, res) => {
@@ -74,22 +77,16 @@ const listenForReplies = async (req, res) => {
       const waid = body.entry[0].changes[0].value.statuses[0].id;
       const status = body.entry[0].changes[0].value.statuses[0].status;
       const from = body.entry[0].changes[0].value.statuses[0].recipient_id;
-      let conversationTimeOut;
+
       if (status === "sent") {
-        conversationTimeOut =
+        const conversationTimeOut =
           body.entry[0].changes[0].value.statuses[0].conversation
             .expiration_timestamp;
+        await updateConversationTimeOut(userId, from, conversationTimeOut);
       }
 
       const message = await updateMessage(waid, status);
-      await updateLastMessage(
-        userId,
-        from,
-        null,
-        false,
-        null,
-        conversationTimeOut
-      );
+
       res.status(200).json(message);
     } else {
       res.sendStatus(404);
