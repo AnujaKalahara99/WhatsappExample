@@ -45,11 +45,13 @@ const listenForReplies = async (req, res) => {
         header.type = "image";
         const mediaFile = await downloadMediaImage(msg_img.id, user.watoken);
         header.media = mediaFile.media;
+        header.fileName = mediaFile.fileName;
       } else if (msg_doc) {
         header.data = msg_doc.id;
         header.type = "document";
         const mediaFile = await downloadMediaImage(msg_doc.id, user.watoken);
         header.media = mediaFile.media;
+        header.fileName = mediaFile.fileName;
       }
 
       const message = await saveMessage(

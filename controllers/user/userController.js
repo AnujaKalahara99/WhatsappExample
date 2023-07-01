@@ -123,8 +123,8 @@ const getUserId = async (waid) => {
 };
 
 const getUser = async (id) => {
-  const user = await user.findOne({ _id: id });
-  return user;
+  const userData = await user.findOne({ _id: id });
+  return userData;
 };
 
 const expense = async (userId, cost) => {
