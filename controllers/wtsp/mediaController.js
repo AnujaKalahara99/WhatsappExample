@@ -14,9 +14,9 @@ const uploadMedia = asyncHandler(async (req, res) => {
 
   var config = {
     method: "post",
-    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.PHONE_NUMBER_ID}/media`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${req.user.phoneNumId}/media`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${req.user.watoken}`,
       ...formData.getHeaders(),
     },
     data: formData,
@@ -34,7 +34,7 @@ const getMedia = asyncHandler(async (req, res) => {
     method: "get",
     url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${req.params.mediaId}`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${req.user.watoken}`,
     },
   };
 
@@ -42,7 +42,10 @@ const getMedia = asyncHandler(async (req, res) => {
   const mimeType = response.data.mime_type;
 
   if (response.status === 200) {
-    const mediaResponse = await downloadMedia(response.data.url);
+    const mediaResponse = await downloadMedia(
+      response.data.url,
+      req.user.watoken
+    );
 
     let file = mediaResponse.data;
     //return a temp image if file is pdf and temp in request's query params
@@ -73,12 +76,12 @@ const getMedia = asyncHandler(async (req, res) => {
   return res.status(500).json(response.status);
 });
 
-const downloadMedia = async (url) => {
+const downloadMedia = async (url, token) => {
   var config = {
     method: "get",
     url,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
     responseType: "arraybuffer",
   };
@@ -99,12 +102,12 @@ const downloadMedia = async (url) => {
   return file;
 };
 
-const downloadMediaImage = async (mediaId) => {
+const downloadMediaImage = async (mediaId, token) => {
   var config = {
     method: "get",
     url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${mediaId}`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   };
 
@@ -112,7 +115,7 @@ const downloadMediaImage = async (mediaId) => {
   const mimeType = response.data.mime_type;
 
   if (response.status === 200) {
-    const mediaResponse = await downloadMedia(response.data.url);
+    const mediaResponse = await downloadMedia(response.data.url, token);
 
     let file = mediaResponse.data;
     //return a temp image if file is pdf and temp in request's query params

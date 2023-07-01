@@ -88,7 +88,7 @@ function mapHeaderParameters(param, i) {
   return json;
 }
 
-const msg2DBFormat = async (msg) => {
+const msg2DBFormat = async (msg, token) => {
   let msgData = {};
   if (msg.type === "text") msgData.body = msg.text.body;
   else if (msg.type && msg.type !== "") {
@@ -98,7 +98,7 @@ const msg2DBFormat = async (msg) => {
     //   data: msg[msg.type].id,
     //   media: media ? media : "",
     // };
-    const mediaFile = await downloadMediaImage(msg[msg.type].id);
+    const mediaFile = await downloadMediaImage(msg[msg.type].id, token);
 
     msgData.header = {
       type: msg.type,

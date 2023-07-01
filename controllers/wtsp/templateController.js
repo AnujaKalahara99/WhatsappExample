@@ -5,9 +5,9 @@ const templateDataHelper = require("./templateDataHelper");
 const getAllTamplates = async (req, res) => {
   var config = {
     method: "get",
-    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${req.user.waid}/message_templates`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${req.user.watoken}`,
       "Content-Type": "application/json",
       "Accept-Encoding": "gzip,deflate,compress",
     },
@@ -35,9 +35,9 @@ const getAllTamplates = async (req, res) => {
 const getTamplate = async (req, res) => {
   var config = {
     method: "get",
-    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates?name=${req.params.name}`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${req.user.waid}/message_templates?name=${req.params.name}`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${req.user.watoken}`,
       "Content-Type": "application/json",
       "Accept-Encoding": "gzip,deflate,compress",
     },
@@ -60,9 +60,9 @@ const createTemplate = async (req, res) => {
 
   const config = {
     method: "post",
-    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${req.user.waid}/message_templates`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${req.user.watoken}`,
       "Content-Type": "application/json",
     },
     data: templateDataHelper.readable2wtsp(template),
@@ -85,7 +85,7 @@ const deleteTemplate = (req, res) => {
   return res.status(200).send("deleted template successfully");
 };
 
-const template2DBformat = async (templateData) => {
+const template2DBformat = async (templateData, token, whatsappId) => {
   let headerVar = [];
   let bodyVar = [];
 
@@ -100,9 +100,9 @@ const template2DBformat = async (templateData) => {
   });
   var config = {
     method: "get",
-    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${process.env.WA_ACCOUNT_ID}/message_templates?name=${templateData.template.name}`,
+    url: `https://graph.facebook.com/${process.env.WAAPI_VERSION}/${whatsappId}/message_templates?name=${templateData.template.name}`,
     headers: {
-      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       "Accept-Encoding": "gzip,deflate,compress",
     },

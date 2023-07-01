@@ -10,6 +10,7 @@ const usersRouter = require("./routes/userroutes");
 const contactsRouter = require("./routes/contacts");
 const campaignRouter = require("./routes/campaign");
 const contactsManagerRouter = require("./routes/contactManagement");
+const usersManagerRouter = require("./routes/usermanagerroutes");
 
 const connectDB = require("./config/db");
 
@@ -23,6 +24,7 @@ app.use("/api/wtsp", wtspRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/contacts", contactsRouter);
 app.use("/api/campaign", campaignRouter);
+app.use("/api/usermanager", usersManagerRouter);
 
 app.use("/api/contactsmanager", contactsManagerRouter);
 

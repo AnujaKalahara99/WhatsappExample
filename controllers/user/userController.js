@@ -1,14 +1,21 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asynchandler = require("express-async-handler");
-const user = require("../../models/userModels");
+const user = require("../../models/userModel");
 
 //@desc Register new user
 //@route POST /api/users
 // @access Public
 const registeruser = asynchandler(async (req, res) => {
-  const { name, email, password, facebooklink, contactnumberstate, waid } =
-    req.body;
+  const {
+    name,
+    email,
+    password,
+    facebooklink,
+    contactnumberstate,
+    waid,
+    watoken,
+  } = req.body;
 
   if (
     !name ||
@@ -16,7 +23,8 @@ const registeruser = asynchandler(async (req, res) => {
     !password ||
     !facebooklink ||
     !contactnumberstate ||
-    !waid
+    !waid ||
+    !watoken
   ) {
     res.status(400);
     throw new Error("Please add all fields");
@@ -41,8 +49,9 @@ const registeruser = asynchandler(async (req, res) => {
     password: hashpassword,
     waid,
     facebooklink,
-    contactnumberstate,
-    balance: 200,
+    contactNumber: contactnumberstate,
+    balance: 0,
+    watoken,
   });
 
   if (users) {

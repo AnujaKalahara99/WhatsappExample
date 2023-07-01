@@ -47,6 +47,16 @@ const createNewContacts = asyncHandler(async (req, res) => {
   return res.status(200).json(log);
 });
 
+const setContactsCSV = asyncHandler(async (req, res) => {
+  insertdata = req.body;
+
+  const options = { ordered: true };
+
+  const contactdata = await contactModel.insertMany(insertdata, options);
+
+  res.status(200).json(contactdata);
+});
+
 const updateContact = async (req, res) => {};
 
 const selectContacts = asyncHandler(async (req, res) => {
@@ -65,9 +75,6 @@ const selectContacts = asyncHandler(async (req, res) => {
     .json({ selected: response.selected, nonSelected: response.deselected });
 });
 
-// @desc    Delete contact details
-// @route   DELETE /api/contactsmanager/:id
-// @access  Private
 const deleteContact = asyncHandler(async (req, res) => {
   const Contact_out = await contactModel.findById(req.params.id);
 
@@ -176,7 +183,9 @@ const getRecent = asyncHandler(async (req, res) => {
 });
 
 const getAllUniqueTags = asyncHandler(async (req, res) => {
-  const contactdata = await contactModel.distinct("tags");
+  const contactdata = await contactModel
+    .find({ userId: req.user._id })
+    .distinct("tags");
   res.status(200).json(contactdata);
 });
 
@@ -203,4 +212,5 @@ module.exports = {
   getRecent,
   readContact,
   getAllUniqueTags,
+  setContactsCSV,
 };

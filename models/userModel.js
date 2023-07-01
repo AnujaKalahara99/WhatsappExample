@@ -10,7 +10,11 @@ const userschema = mongoose.Schema(
     },
     password: { type: String, required: [true, "Please add a password"] },
     waid: { type: String, required: true },
+    phoneNumId: { type: String, required: true },
+    watoken: { type: String, required: true },
+    contactNumber: { type: Number, required: false },
     balance: { type: Number },
+    status: { type: Boolean, required: false, default: true },
   },
   {
     timestamps: true,
