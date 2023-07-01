@@ -1,6 +1,6 @@
 const { saveMessage, updateMessage } = require("../../models/messageModel");
 const { createLog } = require("../../models/logModel");
-const { getUserId } = require("../user/userController");
+const { getUserId, getUser } = require("../user/userController");
 const {
   updateLastMessage,
   updateConversationTimeOut,
@@ -24,6 +24,8 @@ const listenForReplies = async (req, res) => {
 
   if (body.object) {
     const userId = await getUserId(body.entry[0].id);
+    const user = await getUser(userId);
+
     //Create Messsage
     if (
       body.entry &&
@@ -41,12 +43,12 @@ const listenForReplies = async (req, res) => {
       if (msg_img) {
         header.data = msg_img.id;
         header.type = "image";
-        const mediaFile = await downloadMediaImage(msg_img.id);
+        const mediaFile = await downloadMediaImage(msg_img.id, user.watoken);
         header.media = mediaFile.media;
       } else if (msg_doc) {
         header.data = msg_doc.id;
         header.type = "document";
-        const mediaFile = await downloadMediaImage(msg_doc.id);
+        const mediaFile = await downloadMediaImage(msg_doc.id, user.watoken);
         header.media = mediaFile.media;
       }
 

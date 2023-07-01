@@ -122,6 +122,11 @@ const getUserId = async (waid) => {
   return userData._id.toString();
 };
 
+const getUser = async (id) => {
+  const user = await user.findOne({ _id: id });
+  return user;
+};
+
 const expense = async (userId, cost) => {
   const account = await user.findOne({ _id: userId });
   if (!account) return { error: "Invalid UserId" };
@@ -139,5 +144,6 @@ module.exports = {
   getme,
   getBalance,
   getUserId,
+  getUser,
   expense,
 };
