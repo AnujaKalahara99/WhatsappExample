@@ -15,6 +15,7 @@ const registeruser = asynchandler(async (req, res) => {
     contactnumberstate,
     waid,
     watoken,
+    phoneNumId,
     isAdmin,
   } = req.body;
 
@@ -25,7 +26,8 @@ const registeruser = asynchandler(async (req, res) => {
     !facebooklink ||
     !contactnumberstate ||
     !waid ||
-    !watoken
+    !watoken ||
+    !phoneNumId
   ) {
     res.status(400);
     throw new Error("Please add all fields");
@@ -54,6 +56,7 @@ const registeruser = asynchandler(async (req, res) => {
     balance: 0,
     watoken,
     isAdmin,
+    phoneNumId,
   });
 
   if (users) {
