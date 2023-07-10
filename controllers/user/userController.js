@@ -15,6 +15,7 @@ const registeruser = asynchandler(async (req, res) => {
     contactnumberstate,
     waid,
     watoken,
+    isAdmin,
   } = req.body;
 
   if (
@@ -52,6 +53,7 @@ const registeruser = asynchandler(async (req, res) => {
     contactNumber: contactnumberstate,
     balance: 0,
     watoken,
+    isAdmin,
   });
 
   if (users) {
@@ -62,6 +64,7 @@ const registeruser = asynchandler(async (req, res) => {
       waid: users.waid,
       token: generatetoken(users._id),
       balance: users.balance,
+      isAdmin: users.isAdmin,
     });
   } else {
     res.status(400);
@@ -84,6 +87,7 @@ const loginuser = asynchandler(async (req, res) => {
       email: users.email,
       token: generatetoken(users._id),
       balance: users.balance,
+      isAdmin: users.isAdmin,
     });
   } else {
     res.status(400);

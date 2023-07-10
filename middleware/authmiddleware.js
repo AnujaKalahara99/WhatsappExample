@@ -30,4 +30,13 @@ const protect = asynchandler(async (req, res, next) => {
   }
 });
 
-module.exports = { protect };
+const isAdmin = asynchandler(async (req, res, next) => {
+  if (req.user.isAdmin !== true) {
+    res.status(401);
+    throw new Error("Not authorized, not an Admin");
+  } else {
+    next();
+  }
+});
+
+module.exports = { protect, isAdmin };

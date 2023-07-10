@@ -15,6 +15,7 @@ const userschema = mongoose.Schema(
     contactNumber: { type: Number, required: false },
     balance: { type: Number },
     status: { type: Boolean, required: false, default: true },
+    isAdmin: { type: Boolean, required: false, default: false },
   },
   {
     timestamps: true,
